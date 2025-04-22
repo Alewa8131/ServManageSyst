@@ -77,6 +77,15 @@ bool test_default_constructor() {
         TestSystem::check(0u, vec.capacity());
 }
 
+bool test_push_front() {
+    TVector<int> vec;
+    vec.push_front(42);
+    vec.push_front(7);
+    return TestSystem::check(2u, vec.size()) &&
+        TestSystem::check(7, vec[0]) &&
+        TestSystem::check(42, vec[1]);
+}
+
 bool test_push_back() {
     TVector<int> vec;
     vec.push_back(10);
@@ -93,6 +102,15 @@ bool test_pop_back() {
         TestSystem::check(2, vec.back());
 }
 
+bool test_shrink_to_fit() {
+    TVector<int> vec = { 1, 2, 3 };
+    vec.pop_back();     // удалит 3
+    vec.shrink_to_fit(); // должен освободить неиспользуемое место
+
+    return TestSystem::check(2u, vec.size()) &&
+        TestSystem::check(2u, vec.capacity()) &&
+        TestSystem::check(2, vec.back());
+}
 
 
 int main() {
@@ -102,6 +120,8 @@ int main() {
     RUN_TEST(test_default_constructor);
     RUN_TEST(test_push_back);
     RUN_TEST(test_pop_back);
+    RUN_TEST(test_push_front);
+    RUN_TEST(test_shrink_to_fit);
 
 
     TestSystem::print_final_info();

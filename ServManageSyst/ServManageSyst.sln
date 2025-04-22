@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TVector", "TVector\TVector.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TVector_Tests", "TVector_Tests\TVector_Tests.vcxproj", "{DAD607BF-1C83-4E10-BB13-3F1A69195771}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Interface", "Interface\Interface.vcxproj", "{B2B51FA4-69CA-43DE-AE38-9F96F6F53BDE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{DAD607BF-1C83-4E10-BB13-3F1A69195771}.Release|x64.Build.0 = Release|x64
 		{DAD607BF-1C83-4E10-BB13-3F1A69195771}.Release|x86.ActiveCfg = Release|Win32
 		{DAD607BF-1C83-4E10-BB13-3F1A69195771}.Release|x86.Build.0 = Release|Win32
+		{B2B51FA4-69CA-43DE-AE38-9F96F6F53BDE}.Debug|x64.ActiveCfg = Debug|x64
+		{B2B51FA4-69CA-43DE-AE38-9F96F6F53BDE}.Debug|x64.Build.0 = Debug|x64
+		{B2B51FA4-69CA-43DE-AE38-9F96F6F53BDE}.Debug|x86.ActiveCfg = Debug|Win32
+		{B2B51FA4-69CA-43DE-AE38-9F96F6F53BDE}.Debug|x86.Build.0 = Debug|Win32
+		{B2B51FA4-69CA-43DE-AE38-9F96F6F53BDE}.Release|x64.ActiveCfg = Release|x64
+		{B2B51FA4-69CA-43DE-AE38-9F96F6F53BDE}.Release|x64.Build.0 = Release|x64
+		{B2B51FA4-69CA-43DE-AE38-9F96F6F53BDE}.Release|x86.ActiveCfg = Release|Win32
+		{B2B51FA4-69CA-43DE-AE38-9F96F6F53BDE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
