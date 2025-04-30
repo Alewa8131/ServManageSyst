@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\GItHubProjects\ServManageSyst\ServManageSyst\CoreLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,6 +131,9 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CoreLib\CoreLib.vcxproj">
+      <Project>{3386bb5f-11dd-47d6-9ed1-dbf893a17021}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\TVector_Tests\TVector_Tests.vcxproj">
       <Project>{dad607bf-1c83-4e10-bb13-3f1a69195771}</Project>
     </ProjectReference>

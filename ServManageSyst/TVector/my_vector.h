@@ -132,6 +132,7 @@ public:
 
 	void insert(size_t pos, const T& value) {
 		//ensure_capacity(); // Глупая проверка т. к. убираются пустые элементы и нет смысла на них проверять
+		reserve(_capacity); // Неявное +1 к размеру _capacity
 
 		// Ищем физический индекс логической позиции pos
 		size_t busy_count = 0;
@@ -196,7 +197,7 @@ public:
 	void pop_front() {
 		if (_size == 0) return;
 
-		for (size_t i = 0; i < _size + _deleted; ++i) {
+		for (size_t i = 0; i < _capacity; ++i) {
 			if (_states[i] == busy) {
 				_states[i] = deleted;
 				++_deleted;
@@ -208,7 +209,7 @@ public:
 	void pop_back() {
 		if (_size == 0) return;
 
-		for (size_t i = _size + _deleted; i > 0; i--) {
+		for (size_t i = _capacity; i > 0; i--) {
 			if (_states[i] == busy) {
 				_states[i] = deleted;
 				++_deleted;
@@ -217,7 +218,22 @@ public:
 			}
 		}
 	}
-	void erase();
+	void erase(size_t pos) {
+		if (_size == 0 || pos >= _size || pos < 0) return;
+
+		size_t busy_count = 0;
+		for (size_t i = 0; i < _capacity; ++i) {
+			if (_states[i] == busy) {
+				if (busy_count == pos) {
+					_states[i] = deleted;
+					--_size;
+					++_deleted;
+					return;
+				}
+				++busy_count;
+			}
+		}
+	}
 
 	void emplace();
 	void assign();
@@ -266,7 +282,7 @@ public:
 		State* new_states = new State[new_cap]();
 
 		size_t new_size = 0;
-		for (size_t i = 0; i < _size + _deleted; ++i) {
+		for (size_t i = 0; i < _capacity; ++i) {
 			if (_states[i] == busy) {
 				new_data[new_size] = _data[i];
 				new_states[new_size] = busy;
@@ -313,14 +329,31 @@ public:
 
 	bool operator==(const TVector& other) const {
 		if (_size != other._size) return false;
-		return std::equal(_data, _data + _size, other._data);
+
+		size_t this_index = 0, other_index = 0;
+		while (this_index < _capacity && other_index < other._capacity) {
+			while (this_index < _capacity && _states[this_index] != busy) ++this_index;
+			while (other_index < other._capacity && other._states[other_index] != busy) ++other_index;
+
+			if (this_index < _capacity && other_index < other._capacity) {
+				if (_data[this_index] != other._data[other_index]) return false;
+				++this_index;
+				++other_index;
+			}
+		}
+
+		return true;
 	}
-	bool operator!= (const TVector& other) const;
+
+	bool operator!=(const TVector& other) const {
+		return !(*this == other);
+	}
+
 	TVector& operator= (const TVector& other);
 
 	T& operator[] (size_t pos) noexcept {
 		size_t active_pos = 0;
-		for (size_t i = 0; i < _size; ++i) {
+		for (size_t i = 0; i < _capacity; ++i) {
 			if (_states[i] == busy) {
 				if (active_pos == pos) {
 					return _data[i];

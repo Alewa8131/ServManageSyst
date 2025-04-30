@@ -102,15 +102,122 @@ bool test_pop_back() {
         TestSystem::check(2, vec.back());
 }
 
-bool test_shrink_to_fit() {
-    TVector<int> vec = { 1, 2, 3 };
-    vec.pop_back();     // удалит 3
-    vec.shrink_to_fit(); // должен освободить неиспользуемое место
+bool test_erase() {
+    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8 };
 
+    vec.erase(3); // 4
+    vec.erase(0); // 1
+    vec.erase(5); // 8 (теперь он по индексу 5)
+
+    return TestSystem::check(5u, vec.size()) &&
+        TestSystem::check(2, vec[0]) &&
+        TestSystem::check(3, vec[1]) &&
+        TestSystem::check(5, vec[2]) &&
+        TestSystem::check(6, vec[3]) &&
+        TestSystem::check(7, vec[4]);
+}
+
+
+bool test_shrink_to_fit() {
+    TVector<int> vec = { 1, 2, 3, 4, 5 };
+    vec.pop_back();
+    vec.erase(2);
+    vec.shrink_to_fit();
+
+    return TestSystem::check(3u, vec.size()) &&
+        TestSystem::check(3u, vec.capacity()) &&
+        TestSystem::check(3, vec.back());
+}
+
+bool test_constructor_with_size() {
+    TVector<int> vec(5);
+    return TestSystem::check(5u, vec.size()) &&
+        TestSystem::check(5u, vec.capacity()) &&
+        TestSystem::check(false, vec.is_empty());
+}
+
+bool test_initializer_list_constructor() {
+    TVector<int> vec = { 1, 2, 3 };
+    return TestSystem::check(3u, vec.size()) &&
+        TestSystem::check(3, vec[2]) &&
+        TestSystem::check(2, vec[1]) &&
+        TestSystem::check(1, vec.front());
+}
+
+bool test_array_constructor() {
+    int arr[] = { 10, 20, 30 };
+    TVector<int> vec(arr, 3);
+    return TestSystem::check(3u, vec.size()) &&
+        TestSystem::check(30, vec.back());
+}
+
+bool test_operator_index() {
+    TVector<int> vec = { 5, 10, 15 };
+    vec[1] = 100;
+    return TestSystem::check(100, vec[1]);
+}
+
+bool test_operator_at() {
+    TVector<int> vec = { 1, 2, 3 };
+    try {
+        return TestSystem::check(2, vec.at(1));
+    }
+    catch (...) {
+        return false;
+    }
+}
+
+bool test_operator_at_throws() {
+    TVector<int> vec = { 1, 2 };
+    try {
+        vec.at(5);
+        return false;
+    }
+    catch (const std::out_of_range&) {
+        return true;
+    }
+}
+
+bool test_insert_middle() {
+    TVector<int> vec = { 1, 3 };
+    vec.insert(1, 2); // [1, 2, 3]
+    return TestSystem::check(3u, vec.size()) &&
+        TestSystem::check(2, vec[1]);
+}
+
+bool test_resize_expand() {
+    TVector<int> vec = { 1, 2 };
+    vec.resize(4);
+    return TestSystem::check(4u, vec.size()) &&
+        TestSystem::check(0, vec[3]);
+}
+
+bool test_resize_shrink() {
+    TVector<int> vec = { 1, 2, 3, 4 };
+    vec.resize(2);
     return TestSystem::check(2u, vec.size()) &&
-        TestSystem::check(2u, vec.capacity()) &&
         TestSystem::check(2, vec.back());
 }
+
+bool test_reserve_increases_capacity() {
+    TVector<int> vec = { 1, 2 };
+    size_t old_capacity = vec.capacity();
+    vec.reserve(old_capacity + 10);
+    return TestSystem::check(true, vec.capacity() > old_capacity);
+}
+
+bool test_equals_operator() {
+    TVector<int> a = { 1, 2, 3 };
+    TVector<int> b = { 1, 2, 3 };
+    return TestSystem::check(true, a == b);
+}
+
+bool test_not_equals_operator() {
+    TVector<int> a = { 1, 2, 3 };
+    TVector<int> b = { 1, 2 };
+    return TestSystem::check(true, a != b);
+}
+
 
 
 int main() {
@@ -118,10 +225,25 @@ int main() {
     TestSystem::print_init_info();
 
     RUN_TEST(test_default_constructor);
+    RUN_TEST(test_push_front);
     RUN_TEST(test_push_back);
     RUN_TEST(test_pop_back);
-    RUN_TEST(test_push_front);
+    RUN_TEST(test_erase);
     RUN_TEST(test_shrink_to_fit);
+
+    RUN_TEST(test_constructor_with_size);
+    RUN_TEST(test_initializer_list_constructor);
+    RUN_TEST(test_array_constructor);
+    RUN_TEST(test_operator_index);
+    RUN_TEST(test_operator_at);
+    RUN_TEST(test_operator_at_throws);
+    RUN_TEST(test_insert_middle);
+    RUN_TEST(test_resize_expand);
+    RUN_TEST(test_resize_shrink);
+    RUN_TEST(test_reserve_increases_capacity);
+    RUN_TEST(test_equals_operator);
+    RUN_TEST(test_not_equals_operator);
+
 
 
     TestSystem::print_final_info();
