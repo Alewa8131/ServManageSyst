@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\GItHubProjects\ServManageSyst\ServManageSyst\CoreLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\GItHubProjects\ServManageSyst\ServManageSyst\GameEntitiesLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,8 +132,17 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AdvertisingLib\AdvertisingLib.vcxproj">
+      <Project>{8d7e28ed-e83e-467a-9c45-7dbc293169f0}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\CoreLib\CoreLib.vcxproj">
       <Project>{3386bb5f-11dd-47d6-9ed1-dbf893a17021}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GameEntitiesLib\GameEntitiesLib.vcxproj">
+      <Project>{47ffd94b-02c3-43c4-a1e6-bd2a03dc01ac}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ReportLib\ReportLib.vcxproj">
+      <Project>{151c4c4c-e28f-475a-ac22-2c693d52d8cd}</Project>
     </ProjectReference>
     <ProjectReference Include="..\TVector_Tests\TVector_Tests.vcxproj">
       <Project>{dad607bf-1c83-4e10-bb13-3f1a69195771}</Project>

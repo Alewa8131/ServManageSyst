@@ -5,10 +5,10 @@ enum State { empty, busy, deleted };
 template <class T>
 class TVector {
 	T* _data = nullptr;
+	State* _states = nullptr;
 	size_t _capacity = 0;
 	size_t _size = 0;
 	size_t _deleted = 0;
-	State* _states = nullptr;
 
 public:
 	TVector() = default;
@@ -17,7 +17,6 @@ public:
 		_states(new State[size]) {
 		std::fill_n(_states, size, busy);
 	}
-
 	TVector(std::initializer_list<T> init) :
 		_data(new T[init.size()]),
 		_capacity(init.size()),
@@ -35,11 +34,12 @@ public:
 	TVector(const T* arr, size_t size) : TVector(size) {
 		std::copy(arr, arr + size, _data);
 	}
-
-	TVector(const TVector& other) : TVector(other._size) {
-		std::copy(other._data, other._data + other._size, _data);
-		std::copy(other._states, other._states + other._size, _states);
-		_deleted = other._deleted;
+	TVector(const TVector& other) : 
+		_data(new T[other._capacity]), _states(new State[other._capacity]),
+		_capacity(other._capacity), _size(other._size), _deleted(other._deleted) 
+	{
+		std::copy(other._data, other._data + other._capacity, _data);
+		std::copy(other._states, other._states + other._capacity, _states);
 	}
 
 	~TVector() {
@@ -48,16 +48,31 @@ public:
 	}
 
 
-	inline bool is_empty() const noexcept {
-		return _size == 0;
-	}
-	inline T* data() noexcept { return _data; }
+	inline bool is_empty() const noexcept { return _size == 0; }
 	inline size_t size() const noexcept { return _size; }
 	inline size_t capacity() const noexcept { return _capacity; }
-	inline T& front() noexcept { return _data[0]; }
-	inline T& back() noexcept { return _data[_size - 1]; }
+	inline T* data() noexcept { return _data; }
 	inline T* begin() noexcept { return _data; }
-	inline T* end() noexcept { return _data + _size; }
+	inline T* end() noexcept { return _data + _capacity; }
+	inline T& front() noexcept { return at(0); }
+	T& back() noexcept {
+		for (size_t i = _capacity; i-- > 0;)
+			if (_states[i] == busy)
+				return _data[i];
+		throw std::out_of_range("TVector::back - empty vector");
+	}
+	T& at(size_t pos) {
+		if (pos >= _size) throw std::out_of_range("TVector::at");
+
+		size_t count = 0;
+		for (size_t i = 0; i < _capacity; ++i) {
+			if (_states[i] == busy) {
+				if (count == pos) return _data[i];
+				++count;
+			}
+		}
+		throw std::out_of_range("TVector::at - logical error");
+	}
 
 	void push_front(const T& value) {
 		ensure_capacity();
@@ -92,7 +107,6 @@ public:
 		_states[0] = busy;
 		++_size;
 	}
-
 	void push_back(const T& value) {
 		ensure_capacity();
 
@@ -127,12 +141,9 @@ public:
 			}
 		}
 	}
-
-
-
 	void insert(size_t pos, const T& value) {
-		//ensure_capacity(); // Глупая проверка т. к. убираются пустые элементы и нет смысла на них проверять
-		reserve(_capacity); // Неявное +1 к размеру _capacity
+		ensure_capacity(); // Глупая проверка т. к. убираются пустые элементы и нет смысла на них проверять
+		//reserve(_capacity + 1); // Неявное +1 к размеру _capacity
 
 		// Ищем физический индекс логической позиции pos
 		size_t busy_count = 0;
@@ -193,7 +204,6 @@ public:
 	}
 
 
-
 	void pop_front() {
 		if (_size == 0) return;
 
@@ -209,7 +219,7 @@ public:
 	void pop_back() {
 		if (_size == 0) return;
 
-		for (size_t i = _capacity; i > 0; i--) {
+		for (size_t i = _capacity; i-- > 0;) {
 			if (_states[i] == busy) {
 				_states[i] = deleted;
 				++_deleted;
@@ -235,13 +245,37 @@ public:
 		}
 	}
 
-	void emplace();
-	void assign();
-	T& at(size_t pos) {
-		if (pos >= _size) throw std::out_of_range("TVector::at");
-		return _data[pos];
+	void emplace(size_t pos, const T& value) {
+		if (pos >= _size) throw std::out_of_range("TVector::emplace");
+
+		size_t busy_count = 0;
+		for (size_t i = 0; i < _capacity; ++i) {
+			if (_states[i] == busy) {
+				if (busy_count == pos) {
+					_data[i] = value;
+					return;
+				}
+				++busy_count;
+			}
+		}
 	}
-	void clear();
+	void clear() {
+		for (size_t i = 0; i < _capacity; ++i) {
+			_states[i] = empty;
+		}
+		_size = 0;
+		_deleted = 0;
+	}
+	void assign(size_t count, const T& value) {
+		clear();
+		reserve(count);
+		for (size_t i = 0; i < count; ++i) {
+			_data[i] = value;
+			_states[i] = busy;
+		}
+		_size = count;
+		_deleted = 0;
+	}
 
 
 	void shrink_to_fit() {
@@ -267,39 +301,6 @@ public:
 		_capacity = _size;
 		_deleted = 0;
 	}
-	void ensure_capacity() {
-		shrink_to_fit();
-		if (_size + _deleted >= _capacity) {
-			reserve(_capacity == 0 ? 1 : _capacity * 3 / 2);
-		}
-	}
-	void reserve(size_t new_cap) {
-		if (new_cap <= _capacity) {
-			new_cap = _capacity + 1;
-		}
-
-		T* new_data = new T[new_cap];
-		State* new_states = new State[new_cap]();
-
-		size_t new_size = 0;
-		for (size_t i = 0; i < _capacity; ++i) {
-			if (_states[i] == busy) {
-				new_data[new_size] = _data[i];
-				new_states[new_size] = busy;
-				++new_size;
-			}
-		}
-
-		delete[] _data;
-		delete[] _states;
-
-		_data = new_data;
-		_states = new_states;
-		_size = new_size;
-		_deleted = 0;
-		_capacity = new_cap;
-	}
-
 
 	void resize(size_t new_size) {
 		if (new_size < _size) {
@@ -330,40 +331,103 @@ public:
 	bool operator==(const TVector& other) const {
 		if (_size != other._size) return false;
 
-		size_t this_index = 0, other_index = 0;
-		while (this_index < _capacity && other_index < other._capacity) {
-			while (this_index < _capacity && _states[this_index] != busy) ++this_index;
-			while (other_index < other._capacity && other._states[other_index] != busy) ++other_index;
+		size_t a = 0, b = 0;
+		while (a < _capacity && b < other._capacity) {
+			while (a < _capacity && _states[a] != busy) ++a;
+			while (b < other._capacity && other._states[b] != busy) ++b;
 
-			if (this_index < _capacity && other_index < other._capacity) {
-				if (_data[this_index] != other._data[other_index]) return false;
-				++this_index;
-				++other_index;
+			if (a < _capacity && b < other._capacity) {
+				if (_data[a] != other._data[b]) return false;
+				++a; ++b;
 			}
 		}
 
 		return true;
 	}
-
 	bool operator!=(const TVector& other) const {
 		return !(*this == other);
 	}
-
-	TVector& operator= (const TVector& other);
-
-	T& operator[] (size_t pos) noexcept {
-		size_t active_pos = 0;
+	TVector& operator=(const TVector& other) {
+		if (this != &other) {
+			delete[] _data;
+			delete[] _states;
+			_capacity = other._capacity;
+			_size = other._size;
+			_deleted = other._deleted;
+			_data = new T[_capacity];
+			_states = new State[_capacity];
+			std::copy(other._data, other._data + _capacity, _data);
+			std::copy(other._states, other._states + _capacity, _states);
+		}
+		return *this;
+	}
+	T& operator[](size_t pos) noexcept {
+		size_t count = 0;
 		for (size_t i = 0; i < _capacity; ++i) {
 			if (_states[i] == busy) {
-				if (active_pos == pos) {
-					return _data[i];
-				}
-				++active_pos;
+				if (count == pos) return _data[i];
+				++count;
+			}
+		}
+		throw std::out_of_range("TVector::operator[]: invalid index");
+	}
+
+
+	template <class T>
+	friend void shuffle(TVector<T>& vec) {
+		for (size_t i = vec._size - 1; i > 0; --i) {
+			size_t j = rand() % (i + 1);
+			if (i != j) {
+				std::swap(vec._data[i], vec._data[j]);
+				std::swap(vec._states[i], vec._states[j]);
 			}
 		}
 	}
 
-	inline bool is_full() const noexcept {
-		return _size + _deleted >= _capacity;
+	template <class T>
+	friend void sort(TVector<T>& vec) {
+		for (size_t i = 0; i < vec._size - 1; ++i) {
+			for (size_t j = i + 1; j < vec._size; ++j) {
+				if (vec._data[i] > vec._data[j]) {
+					std::swap(vec._data[i], vec._data[j]);
+					std::swap(vec._states[i], vec._states[j]);
+				}
+			}
+		}
 	}
+
+
+	private:
+		inline bool is_full() const noexcept { return _size + _deleted >= _capacity; }
+		void ensure_capacity() {
+			if (is_full()) {
+				reserve(_capacity <= 1 ? 2 : _capacity * 3 / 2);
+			}
+		}
+		void reserve(size_t new_cap) {
+			if (new_cap <= _capacity) {
+				return;
+			}
+
+			T* new_data = new T[new_cap];
+			State* new_states = new State[new_cap]();
+
+			size_t j = 0;
+			for (size_t i = 0; i < _capacity; ++i) {
+				if (_states[i] == busy) {
+					new_data[j] = _data[i];
+					new_states[j] = busy;
+					++j;
+				}
+			}
+
+			delete[] _data;
+			delete[] _states;
+
+			_data = new_data;
+			_states = new_states;
+			_size = j;
+			_deleted = 0;
+			_capacity = new_cap;
+		}
 };

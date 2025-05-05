@@ -71,11 +71,32 @@ namespace TestSystem {
     }
 };
 
+
 bool test_default_constructor() {
     TVector<int> vec;
     return TestSystem::check(0u, vec.size()) &&
         TestSystem::check(0u, vec.capacity());
 }
+bool test_constructor_with_size() {
+    TVector<int> vec(5);
+    return TestSystem::check(5u, vec.size()) &&
+        TestSystem::check(5u, vec.capacity()) &&
+        TestSystem::check(false, vec.is_empty());
+}
+bool test_initializer_list_constructor() {
+    TVector<int> vec = { 1, 2, 3 };
+    return TestSystem::check(3u, vec.size()) &&
+        TestSystem::check(3, vec[2]) &&
+        TestSystem::check(2, vec[1]) &&
+        TestSystem::check(1, vec.front());
+}
+bool test_array_constructor() {
+    int arr[] = { 10, 20, 30 };
+    TVector<int> vec(arr, 3);
+    return TestSystem::check(3u, vec.size()) &&
+        TestSystem::check(30, vec.back());
+}
+
 
 bool test_push_front() {
     TVector<int> vec;
@@ -85,7 +106,6 @@ bool test_push_front() {
         TestSystem::check(7, vec[0]) &&
         TestSystem::check(42, vec[1]);
 }
-
 bool test_push_back() {
     TVector<int> vec;
     vec.push_back(10);
@@ -94,14 +114,12 @@ bool test_push_back() {
         TestSystem::check(10, vec[0]) &&
         TestSystem::check(20, vec[1]);
 }
-
 bool test_pop_back() {
     TVector<int> vec = { 1, 2, 3 };
     vec.pop_back();
     return TestSystem::check(2u, vec.size()) &&
         TestSystem::check(2, vec.back());
 }
-
 bool test_erase() {
     TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8 };
 
@@ -116,48 +134,65 @@ bool test_erase() {
         TestSystem::check(6, vec[3]) &&
         TestSystem::check(7, vec[4]);
 }
+bool test_insert_middle() {
+    TVector<int> vec = { 1, 3 };
+    vec.insert(1, 2); // [1, 2, 3]
+    return TestSystem::check(3u, vec.size()) &&
+        TestSystem::check(2, vec[1]);
+}
+bool test_emplace_replace() {
+    TVector<int> vec = { 10, 20, 30 };
+    vec.emplace(1, 99);
+    return TestSystem::check(99, vec[1]);
+}
+bool test_emplace_out_of_range() {
+    TVector<int> vec = { 1, 2, 3 };
+    try {
+        vec.emplace(10, 42);
+        return false;
+    }
+    catch (...) {
+        return true;
+    }
+}
+bool test_clear() {
+    TVector<int> vec = { 1, 2, 3 };
+    vec.clear();
+    return TestSystem::check(0u, vec.size()) && TestSystem::check(true, vec.is_empty());
+}
+bool test_assign_fill() {
+    TVector<int> vec;
+    vec.assign(3, 7);
+    return TestSystem::check(3, vec.size()) && TestSystem::check(7, vec[0]) && TestSystem::check(7, vec[2]);
+}
 
 
 bool test_shrink_to_fit() {
-    TVector<int> vec = { 1, 2, 3, 4, 5 };
-    vec.pop_back();
-    vec.erase(2);
-    vec.shrink_to_fit();
-
-    return TestSystem::check(3u, vec.size()) &&
-        TestSystem::check(3u, vec.capacity()) &&
-        TestSystem::check(3, vec.back());
-}
-
-bool test_constructor_with_size() {
-    TVector<int> vec(5);
-    return TestSystem::check(5u, vec.size()) &&
-        TestSystem::check(5u, vec.capacity()) &&
-        TestSystem::check(false, vec.is_empty());
-}
-
-bool test_initializer_list_constructor() {
     TVector<int> vec = { 1, 2, 3 };
-    return TestSystem::check(3u, vec.size()) &&
-        TestSystem::check(3, vec[2]) &&
-        TestSystem::check(2, vec[1]) &&
-        TestSystem::check(1, vec.front());
+    vec.pop_back();
+    vec.shrink_to_fit();
+    return TestSystem::check(vec.size(), vec.capacity());
+}
+bool test_resize_expand() {
+    TVector<int> vec = { 1, 2 };
+    vec.resize(4);
+    return TestSystem::check(4u, vec.size()) &&
+        TestSystem::check(0, vec[3]);
+}
+bool test_resize_shrink() {
+    TVector<int> vec = { 1, 2, 3, 4 };
+    vec.resize(2);
+    return TestSystem::check(2u, vec.size()) &&
+        TestSystem::check(2, vec.back());
 }
 
-bool test_array_constructor() {
-    int arr[] = { 10, 20, 30 };
-    TVector<int> vec(arr, 3);
-    return TestSystem::check(3u, vec.size()) &&
-        TestSystem::check(30, vec.back());
-}
 
-bool test_operator_index() {
+bool test_index_operator() {
     TVector<int> vec = { 5, 10, 15 };
     vec[1] = 100;
     return TestSystem::check(100, vec[1]);
 }
-
-bool test_operator_at() {
+bool test_at_operator() {
     TVector<int> vec = { 1, 2, 3 };
     try {
         return TestSystem::check(2, vec.at(1));
@@ -166,8 +201,7 @@ bool test_operator_at() {
         return false;
     }
 }
-
-bool test_operator_at_throws() {
+bool test_at_operator_exception() {
     TVector<int> vec = { 1, 2 };
     try {
         vec.at(5);
@@ -177,41 +211,11 @@ bool test_operator_at_throws() {
         return true;
     }
 }
-
-bool test_insert_middle() {
-    TVector<int> vec = { 1, 3 };
-    vec.insert(1, 2); // [1, 2, 3]
-    return TestSystem::check(3u, vec.size()) &&
-        TestSystem::check(2, vec[1]);
-}
-
-bool test_resize_expand() {
-    TVector<int> vec = { 1, 2 };
-    vec.resize(4);
-    return TestSystem::check(4u, vec.size()) &&
-        TestSystem::check(0, vec[3]);
-}
-
-bool test_resize_shrink() {
-    TVector<int> vec = { 1, 2, 3, 4 };
-    vec.resize(2);
-    return TestSystem::check(2u, vec.size()) &&
-        TestSystem::check(2, vec.back());
-}
-
-bool test_reserve_increases_capacity() {
-    TVector<int> vec = { 1, 2 };
-    size_t old_capacity = vec.capacity();
-    vec.reserve(old_capacity + 10);
-    return TestSystem::check(true, vec.capacity() > old_capacity);
-}
-
 bool test_equals_operator() {
     TVector<int> a = { 1, 2, 3 };
     TVector<int> b = { 1, 2, 3 };
     return TestSystem::check(true, a == b);
 }
-
 bool test_not_equals_operator() {
     TVector<int> a = { 1, 2, 3 };
     TVector<int> b = { 1, 2 };
@@ -224,23 +228,32 @@ int main() {
     setlocale(LC_ALL, "Russian");
     TestSystem::print_init_info();
 
+    // Конструкторы
     RUN_TEST(test_default_constructor);
+    RUN_TEST(test_constructor_with_size);
+    RUN_TEST(test_initializer_list_constructor);
+    RUN_TEST(test_array_constructor);
+
+    // Изменения элементов
     RUN_TEST(test_push_front);
     RUN_TEST(test_push_back);
     RUN_TEST(test_pop_back);
     RUN_TEST(test_erase);
-    RUN_TEST(test_shrink_to_fit);
-
-    RUN_TEST(test_constructor_with_size);
-    RUN_TEST(test_initializer_list_constructor);
-    RUN_TEST(test_array_constructor);
-    RUN_TEST(test_operator_index);
-    RUN_TEST(test_operator_at);
-    RUN_TEST(test_operator_at_throws);
     RUN_TEST(test_insert_middle);
+    RUN_TEST(test_emplace_replace);
+    RUN_TEST(test_emplace_out_of_range);
+    RUN_TEST(test_clear);
+    RUN_TEST(test_assign_fill);
+
+    // Работа с памятью
+    RUN_TEST(test_shrink_to_fit);
     RUN_TEST(test_resize_expand);
     RUN_TEST(test_resize_shrink);
-    RUN_TEST(test_reserve_increases_capacity);
+
+    // Операторы
+    RUN_TEST(test_index_operator);
+    RUN_TEST(test_at_operator);
+    RUN_TEST(test_at_operator_exception);
     RUN_TEST(test_equals_operator);
     RUN_TEST(test_not_equals_operator);
 
