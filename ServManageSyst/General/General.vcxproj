@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\GItHubProjects\ServManageSyst\ServManageSyst\GameEntitiesLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,6 +129,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AdvertisingLib\AdvertisingLib.vcxproj">
+      <Project>{8d7e28ed-e83e-467a-9c45-7dbc293169f0}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\CoreLib\CoreLib.vcxproj">
+      <Project>{3386bb5f-11dd-47d6-9ed1-dbf893a17021}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GameEntitiesLib\GameEntitiesLib.vcxproj">
+      <Project>{47ffd94b-02c3-43c4-a1e6-bd2a03dc01ac}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ReportLib\ReportLib.vcxproj">
+      <Project>{151c4c4c-e28f-475a-ac22-2c693d52d8cd}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
