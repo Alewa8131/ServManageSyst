@@ -132,12 +132,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\TVector\vector_tests.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\TVector\TVector.vcxproj">
       <Project>{0842d571-e81c-4e2f-9595-9ce32cc0ffd6}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="vector_tests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
