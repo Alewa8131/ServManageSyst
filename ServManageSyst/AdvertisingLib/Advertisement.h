@@ -1,14 +1,17 @@
+// Copyright 2025 Alewa8131
 #pragma once
 #include <Server.h>
 
 class Advertisement {
-private:
+
+ private:
     std::string name;
     Server* targetServer;
     double cost;
     double duration;
     std::string status;
-public:
+
+ public:
     void start();
     void stop();
 };

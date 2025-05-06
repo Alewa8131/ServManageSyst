@@ -1,10 +1,13 @@
+// Copyright 2025 Alewa8131
 #pragma once
 #include <string>
 
 class DateTime {
-private:
+
+ private:
     int day, month, year, hour, minute;
-public:
+
+ public:
     DateTime();
     DateTime(int d, int m, int y, int h = 0, int min = 0);
     std::string toString() const;

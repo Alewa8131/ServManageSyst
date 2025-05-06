@@ -1,11 +1,14 @@
+// Copyright 2025 Alewa8131
 #pragma once
 #include <string>
 
 class User {
-protected:
+
+ protected:
     int id;
     std::string username;
-public:
+
+ public:
     virtual ~User() = default;
     int getId() const;
     std::string getUsername() const;
