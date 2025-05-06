@@ -1,13 +1,16 @@
+// Copyright 2025 Alewa8131
 #pragma once
 #include <DateTime.h>
 
 class Privilege {
-private:
+
+ private:
     std::string name;
     double price;
     DateTime purchaseDate;
     int durationDays;
-public:
+
+ public:
     void setName(const std::string& name);
     void setPrice(double price);
     void printInfo() const;
