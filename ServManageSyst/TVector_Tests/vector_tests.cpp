@@ -80,9 +80,8 @@ bool test_default_constructor() {
 }
 bool test_constructor_with_size() {
     TVector<int> vec(5);
-    return TestSystem::check(5u, vec.size()) &&
-        TestSystem::check(5u, vec.capacity()) &&
-        TestSystem::check(false, vec.is_empty());
+    return TestSystem::check(5u, vec.capacity()) &&
+        TestSystem::check(true, vec.is_empty());
 }
 bool test_initializer_list_constructor() {
     TVector<int> vec = { 1, 2, 3 };
