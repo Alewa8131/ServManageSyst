@@ -1,8 +1,8 @@
 // Copyright 2025 Alewa8131
 #pragma once
+#include <string>
 #include "../CoreLib/User.h"
 #include "../CoreLib/DateTime.h"
-#include <string>
 
 class Privilege;
 class Server;

@@ -1,10 +1,9 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include "../CoreLib/DateTime.h"
 #include <string>
+#include "../CoreLib/DateTime.h"
 
 class Privilege {
-
  private:
     std::string name;
     double price;

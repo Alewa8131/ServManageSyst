@@ -1,10 +1,9 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include "../GameEntitiesLib/Event.h"
 #include <string>
+#include "../GameEntitiesLib/Event.h"
 
 class Server {
-
  private:
     std::string name;
     std::string ip;

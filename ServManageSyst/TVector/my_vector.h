@@ -63,6 +63,8 @@ class TVector {
      void reserve(size_t new_cap);
      void clear_tail(T* data, State* states, size_t from, size_t to);
      void free_memory();
+     template <typename InputIt, typename OutputIt>
+     void my_copy(InputIt first, InputIt last, OutputIt dest);
 };
 
 template <class T>
@@ -80,7 +82,7 @@ TVector<T>::TVector(std::initializer_list<T> init) :
     _capacity(init.size()),
     _size(init.size()),
     _states(new State[init.size()]) {
-    std::copy(init.begin(), init.end(), _data);
+    my_copy(init.begin(), init.end(), _data);
     std::fill_n(_states, _size, busy);
     std::fill_n(&_states[_size], _capacity - _size, empty);
 }
@@ -102,8 +104,8 @@ template <class T>
 TVector<T>::TVector(const TVector& other) :
     _data(new T[other._capacity]), _states(new State[other._capacity]),
     _capacity(other._capacity), _size(other._size), _deleted(other._deleted) {
-    std::copy(other._data, other._data + other._capacity, _data);
-    std::copy(other._states, other._states + other._capacity, _states);
+    my_copy(other._data, other._data + other._capacity, _data);
+    my_copy(other._states, other._states + other._capacity, _states);
 }
 
 template <class T>
@@ -155,7 +157,7 @@ template <class T>
 void TVector<T>::push_front(const T& value) {
     ensure_capacity();
 
-    // Если первый элемент не занят — вставляем без сдвига
+    // If the first element is not busy, we insert it without a shift
     if (_states[0] != busy) {
         _data[0] = value;
         if (_states[0] == deleted) {
@@ -166,7 +168,7 @@ void TVector<T>::push_front(const T& value) {
         return;
     }
 
-    // Ищем позицию куда можно сдвинуть (последняя пустая или удалённая)
+    // We are looking for a position where you can move (the last empty or remote)
     size_t target = _capacity;
     for (size_t i = _capacity; i-- > 0;) {
         if (_states[i] != busy) {
@@ -175,7 +177,7 @@ void TVector<T>::push_front(const T& value) {
         }
     }
 
-    // Сдвигаем элементы назад до найденной позиции
+    // We move the elements back to the found position
     for (size_t i = target; i > 0; --i) {
         _data[i] = _data[i - 1];
         _states[i] = _states[i - 1];
@@ -196,7 +198,7 @@ template <class T>
 void TVector<T>::insert(size_t pos, const T& value) {
     ensure_capacity();
 
-    // Ищем физический индекс логической позиции pos
+    // We are looking for a physical index of the logical position "pos"
     size_t busy_count = 0;
     size_t physical_index = 0;
     for (; physical_index < _capacity; ++physical_index) {
@@ -335,7 +337,7 @@ void TVector<T>::assign(size_t count, const T& value) {
 }
 
 template <class T>
-void TVector<T>::shrink_to_fit() { // Вынести очистку удалённых
+void TVector<T>::shrink_to_fit() {
     if (_size == _capacity) return;
 
     if (_size == 0) {
@@ -418,8 +420,8 @@ TVector<T>& TVector<T>::operator=(const TVector& other) {
         _deleted = other._deleted;
         _data = new T[_capacity];
         _states = new State[_capacity];
-        std::copy(other._data, other._data + _capacity, _data);
-        std::copy(other._states, other._states + _capacity, _states);
+        my_copy(other._data, other._data + _capacity, _data);
+        my_copy(other._states, other._states + _capacity, _states);
     }
     return *this;
 }
@@ -430,9 +432,8 @@ T& TVector<T>::operator[](size_t pos) noexcept {
     }
 }
 
-
 template <class T>
-inline bool TVector<T>::is_full() const noexcept { 
+inline bool TVector<T>::is_full() const noexcept {
     return _size + _deleted >= _capacity;
 }
 
@@ -495,5 +496,15 @@ void TVector<T>::free_memory() {
     if (_states != nullptr) {
         delete[] _states;
         _states = nullptr;
+    }
+}
+
+template <class T>
+template <class InputIt, class OutputIt>
+void TVector<T>::my_copy(InputIt first, InputIt last, OutputIt dest) {
+    while (first != last) {
+        *dest = *first;
+        ++first;
+        ++dest;
     }
 }

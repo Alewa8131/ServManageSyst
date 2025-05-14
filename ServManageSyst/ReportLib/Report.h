@@ -1,16 +1,15 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include "../GameEntitiesLib/Player.h"
 #include <string>
+#include "../GameEntitiesLib/Player.h"
 
 class Report {
-
  private:
     int id;
     Player* author;
     std::string content;
     std::string reportType;  // "cheating", "abuse"
-    Player* reportedPlayer;  // необязательно
+    Player* reportedPlayer;
     std::string status;  // "pending", "reviewed"
     std::string verdict;
     DateTime submissionDate;

@@ -3,7 +3,6 @@
 #include <string>
 
 class Analytics {
-
  private:
     std::string reportPeriod;
     double newPlayers;

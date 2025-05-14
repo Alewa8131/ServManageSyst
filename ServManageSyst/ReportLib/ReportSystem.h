@@ -1,10 +1,9 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include "../ReportLib/Report.h"
 #include <string>
+#include "../ReportLib/Report.h"
 
 class ReportSystem {
-
  private:
     // std::vector<Report*> pendingReports;
     // std::vector<Report*> reviewedReports;

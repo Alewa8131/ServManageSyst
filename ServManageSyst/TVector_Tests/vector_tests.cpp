@@ -1,9 +1,10 @@
 // Copyright 2025 Alewa8131
 #include <my_vector.h>
 
-#include <iostream>
 #include <clocale>
 #include <windows.h>
+
+#include <iostream>
 
 void set_color(int text_color, int bg_color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -235,9 +236,9 @@ bool test_resize_expand_size() {
 bool test_ensure_capacity_triggers_reserve() {
     TVector<int> vec;
     vec.push_back(1);
-    vec.push_back(2); // _capacity заполнено
+    vec.push_back(2);  // _capacity заполнено
     size_t cap_before = vec.capacity();
-    vec.push_back(3); // должно вызвать reserve()
+    vec.push_back(3);  // должно вызвать reserve()
     return TestSystem::check(true, vec.capacity() > cap_before);
 }
 

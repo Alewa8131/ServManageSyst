@@ -1,10 +1,9 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include "../GameEntitiesLib/Server.h"
 #include <string>
+#include "../GameEntitiesLib/Server.h"
 
 class Advertisement {
-
  private:
     std::string name;
     Server* targetServer;

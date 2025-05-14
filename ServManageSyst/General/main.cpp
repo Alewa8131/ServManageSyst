@@ -1,6 +1,7 @@
 // Copyright 2025 Alewa8131
 #include <clocale>
 #include <Windows.h>
+
 #include <iostream>
 #include <string>
 
@@ -10,8 +11,8 @@
 
 int main() {
     setlocale(LC_ALL, "rus");
-	SetConsoleOutputCP(1251);
-	SetConsoleCP(1251);
-
-	return 0;
+    SetConsoleOutputCP(1251);
+    SetConsoleCP(1251);
+    
+    return 0;
 }

@@ -3,7 +3,6 @@
 #include <string>
 
 class User {
-
  protected:
     int id;
     std::string username;

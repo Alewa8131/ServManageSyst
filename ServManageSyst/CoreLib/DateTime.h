@@ -3,7 +3,6 @@
 #include <string>
 
 class DateTime {
-
  private:
     int day, month, year, hour, minute;
 

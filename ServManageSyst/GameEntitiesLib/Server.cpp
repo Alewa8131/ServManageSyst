@@ -1,2 +1,2 @@
 // Copyright 2025 Alewa8131
-#include "../GameEntitiesLib/Server.h"
+#include "Server.h"
