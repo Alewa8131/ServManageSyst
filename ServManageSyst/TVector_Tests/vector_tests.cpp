@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#include "my_vector.h"
+#include "../TVector/my_vector.h"
 
 void set_color(int text_color, int bg_color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -278,9 +278,51 @@ bool test_not_equals_operator() {
     return TestSystem::check(true, a != b);
 }
 
+bool test_shuffle_empty_vector() {
+    TVector<int> vec;
+    shuffle(vec);
+    return TestSystem::check(0u, vec.size());
+}
+bool test_shuffle_single_element() {
+    TVector<int> vec;
+    vec.push_back(777);
+    shuffle(vec);
+    return TestSystem::check(1u, vec.size()) && TestSystem::check(777, vec[0]);
+}
+
+bool test_find_first_basic() {
+    TVector<int> vec = {10, 20, 30, 20, 40};
+    return TestSystem::check(1u, find_first(vec, 20)) &&
+        TestSystem::check(0u, find_first(vec, 10)) &&
+        TestSystem::check(4u, find_first(vec, 40)) &&
+        TestSystem::check(-1, find_first(vec, 99));
+}
+bool test_find_last_basic() {
+    TVector<int> vec = { 10, 20, 30, 20, 40 };
+    return TestSystem::check(3u, find_last(vec, 20)) &&
+        TestSystem::check(0u, find_last(vec, 10)) &&
+        TestSystem::check(4u, find_last(vec, 40)) &&
+        TestSystem::check(-1, find_last(vec, 99));
+}
+bool test_find_all_basic() {
+    TVector<int> vec = {5, 7, 5, 1, 5, 3};
+    TVector<size_t> result = find_all(vec, 5);
+    if (!TestSystem::check(3u, result.size())) return false;
+    return TestSystem::check(0u, result[0]) &&
+        TestSystem::check(2u, result[1]) &&
+        TestSystem::check(4u, result[2]);
+}
+bool test_find_all_empty_result() {
+    TVector<int> vec = { 1, 2, 3, 4 };
+    vec.push_back(5);
+    TVector<size_t> result = find_all(vec, 0);
+    return TestSystem::check(0u, result.size());
+}
+
 
 int main() {
     setlocale(LC_ALL, "Russian");
+    srand(time(0));
     TestSystem::print_init_info();
 
     // Constructors
@@ -318,8 +360,15 @@ int main() {
     RUN_TEST(test_equals_operator);
     RUN_TEST(test_not_equals_operator);
 
+    // Shuffle
+    RUN_TEST(test_shuffle_empty_vector);
+    RUN_TEST(test_shuffle_single_element);
 
-
+    // Find
+    RUN_TEST(test_find_first_basic);
+    RUN_TEST(test_find_last_basic);
+    RUN_TEST(test_find_all_basic);
+    RUN_TEST(test_find_all_empty_result);
 
     TestSystem::print_final_info();
     return 0;

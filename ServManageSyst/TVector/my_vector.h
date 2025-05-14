@@ -35,6 +35,7 @@ class TVector {
      //
      T& back() noexcept;
      T& at(size_t pos);
+     const T& at(size_t pos) const;
      //
      void push_front(const T& value);
      void push_back(const T& value);
@@ -56,13 +57,24 @@ class TVector {
      bool operator!=(const TVector& other) const;
      TVector& operator=(const TVector& other);
      T& operator[](size_t pos) noexcept;
-
+     //
+     template <class T>
+     friend void swap(T& a, T& b);
+     template <class T>
+     friend void shuffle(TVector<T>& vec);
+     template <class T>
+     friend int find_first(const TVector<T>& vec, const T& value);
+     template <class T>
+     friend int find_last(const TVector<T>& vec, const T& value);
+     template <class T>
+     friend TVector<size_t> find_all(const TVector<T>& vec, const T& value);
  private:
      inline bool is_full() const noexcept;
      void ensure_capacity();
      void reserve(size_t new_cap);
      void clear_tail(T* data, State* states, size_t from, size_t to);
      void free_memory();
+     //
      template <typename InputIt, typename OutputIt>
      void my_copy(InputIt first, InputIt last, OutputIt dest);
 };
@@ -137,10 +149,22 @@ T& TVector<T>::back() noexcept {
     for (size_t i = _capacity; i-- > 0;)
         if (_states[i] == busy)
             return _data[i];
-    throw std::out_of_range("TVector::back - empty vector");
 }
 template <class T>
 T& TVector<T>::at(size_t pos) {
+    if (pos >= _size) throw std::out_of_range("TVector::at");
+
+    size_t count = 0;
+    for (size_t i = 0; i < _capacity; ++i) {
+        if (_states[i] == busy) {
+            if (count == pos) return _data[i];
+            ++count;
+        }
+    }
+    throw std::out_of_range("TVector::at - logical error");
+}
+template <class T>
+const T& TVector<T>::at(size_t pos) const {
     if (pos >= _size) throw std::out_of_range("TVector::at");
 
     size_t count = 0;
@@ -508,4 +532,82 @@ void TVector<T>::my_copy(InputIt first, InputIt last, OutputIt dest) {
         ++first;
         ++dest;
     }
+}
+
+template <class T>
+void swap(T& a, T& b) {
+    T c;
+    c = a;
+    a = b;
+    b = c;
+}
+template <class T>
+void shuffle(TVector<T>& vec) {  // Use srand(time(0));
+    size_t n = vec.size();
+    if (n <= 1) {
+        return;
+    }
+    for (size_t i = n - 1; i > 0; --i) {
+        size_t j = rand() % (i + 1);
+        swap(vec[i], vec[j]);
+    }
+}
+template <class T>
+void hoar_sort_rec(TVector<T>& vec, int left, int right) {
+    if (left >= right) return;
+
+    T base = vec.at((left + right) / 2);
+    int i = left;
+    int j = right;
+
+    while (i <= j) {
+        while (vec.at(i) < base) ++i;
+        while (vec.at(j) > base) --j;
+
+        if (i <= j) {
+            swap(vec.at(i), vec.at(j));
+            ++i;
+            --j;
+        }
+    }
+
+    if (left < j) hoar_sort_rec(vec, left, j);
+    if (i < right) hoar_sort_rec(vec, i, right);
+}
+template <class T>
+void hoar_sort(TVector<T>& vec) {
+    if (vec.size() > 1)
+        hoar_sort_rec(vec, 0, vec.size() - 1);
+}
+
+template <class T>
+int find_first(const TVector<T>& vec, const T& value) {
+    for (size_t i = 0; i < vec.size(); ++i) {
+        if (vec.at(i) == value) {
+            return i;
+        }
+    }
+    return -1;
+}
+template <class T>
+int find_last(const TVector<T>& vec, const T& value) {
+    for (size_t i = vec.size(); i-- > 0;) {
+        // But "at" passes through an array first
+        // comparing the position
+        // it is stupid to go from the end and check for "at"
+        if (vec.at(i) == value) {
+            return i;
+        }
+    }
+    return -1;
+}
+template <class T>
+TVector<size_t> find_all(const TVector<T>& vec, const T& value) {
+    TVector<size_t> result;
+    for (size_t i = 0; i < vec.size(); ++i) {
+        if (vec.at(i) == value) {
+            result.push_back(i);
+        }
+    }
+    return result;
 }
