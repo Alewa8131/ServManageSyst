@@ -1,6 +1,7 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include "Event.h"
+#include "../GameEntitiesLib/Event.h"
+#include <string>
 
 class Server {
 

@@ -1,6 +1,7 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include "Report.h"
+#include "../ReportLib/Report.h"
+#include <string>
 
 class ReportSystem {
 

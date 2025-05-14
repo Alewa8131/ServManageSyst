@@ -1,13 +1,13 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include <../CoreLib/User.h>
-#include <../CoreLib/DateTime.h>
+#include "../CoreLib/User.h"
+#include "../CoreLib/DateTime.h"
+#include <string>
 
 class Privilege;
 class Server;
 
 class Player : public User {
-
  private:
     Server* server;
     DateTime joinDate;
@@ -16,7 +16,6 @@ class Player : public User {
     std::string status;  // "active", "inactive", "banned"
     double moneySpent;
     // std::vector<Privilege*> privilegeHistory;
-
  public:
     void setName(const std::string& name);
     void changePrivilege(Privilege* p);

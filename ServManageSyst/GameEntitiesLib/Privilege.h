@@ -1,6 +1,7 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include <DateTime.h>
+#include "../CoreLib/DateTime.h"
+#include <string>
 
 class Privilege {
 

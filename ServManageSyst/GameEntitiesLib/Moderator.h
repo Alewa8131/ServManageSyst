@@ -1,6 +1,7 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include <User.h>
+#include "../CoreLib/User.h"
+#include <string>
 
 class Moderator : public User {
 

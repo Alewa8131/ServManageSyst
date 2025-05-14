@@ -1,6 +1,7 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include <../GameEntitiesLib/Player.h>
+#include "../GameEntitiesLib/Player.h"
+#include <string>
 
 class Report {
 

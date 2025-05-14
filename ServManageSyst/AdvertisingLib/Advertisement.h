@@ -1,6 +1,7 @@
 // Copyright 2025 Alewa8131
 #pragma once
-#include <Server.h>
+#include "../GameEntitiesLib/Server.h"
+#include <string>
 
 class Advertisement {
 
