@@ -168,7 +168,8 @@ void TVector<T>::push_front(const T& value) {
         return;
     }
 
-    // We are looking for a position where you can move (the last empty or remote)
+    // We are looking for a position where you can move
+    // (the last empty or remote)
     size_t target = _capacity;
     for (size_t i = _capacity; i-- > 0;) {
         if (_states[i] != busy) {

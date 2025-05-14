@@ -1,10 +1,10 @@
 // Copyright 2025 Alewa8131
-#include <my_vector.h>
-
 #include <clocale>
 #include <windows.h>
 
 #include <iostream>
+
+#include "my_vector.h"
 
 void set_color(int text_color, int bg_color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -41,7 +41,7 @@ bool check(const T1& expected, const T2& actual) {
     if (expected == actual) {
         return true;
     } else {
-        std::cerr << "Expected: " << expected 
+        std::cerr << "Expected: " << expected
             << ", Actual: " << actual << std::endl;
         return false;
     }
@@ -57,18 +57,18 @@ void print_final_info() {
     set_color(2, 0);
     std::cout << "[==========] ";
     set_color(7, 0);
-    std::cout << count_success + count_failed << " test" << 
+    std::cout << count_success + count_failed << " test" <<
         (count_success + count_failed > 1 ? "s" : "") << " ran." << std::endl;
     set_color(2, 0);
     std::cout << "[  PASSED  ] ";
     set_color(7, 0);
-    std::cout << count_success << " test" << 
+    std::cout << count_success << " test" <<
         (count_success > 1 ? "s" : "") << std::endl;
     if (count_failed > 0) {
         set_color(4, 0);
         std::cout << "[  FAILED  ] ";
         set_color(7, 0);
-        std::cout << count_failed << " test" << 
+        std::cout << count_failed << " test" <<
             (count_failed > 1 ? "s." : ".") << std::endl;
     }
 }
@@ -170,7 +170,7 @@ bool test_emplace_out_of_range() {
 bool test_clear() {
     TVector<int> vec = { 1, 2, 3 };
     vec.clear();
-    return TestSystem::check(0u, vec.size()) && 
+    return TestSystem::check(0u, vec.size()) &&
         TestSystem::check(true, vec.is_empty());
 }
 bool test_clear_then_push_back() {
@@ -183,7 +183,7 @@ bool test_clear_then_push_back() {
 bool test_assign_fill() {
     TVector<int> vec;
     vec.assign(3, 7);
-    return TestSystem::check(3, vec.size()) && 
+    return TestSystem::check(3, vec.size()) &&
         TestSystem::check(7, vec.at(0)) && TestSystem::check(7, vec.at(2));
 }
 
@@ -236,9 +236,9 @@ bool test_resize_expand_size() {
 bool test_ensure_capacity_triggers_reserve() {
     TVector<int> vec;
     vec.push_back(1);
-    vec.push_back(2);  // _capacity заполнено
+    vec.push_back(2);  // _capacity illed
     size_t cap_before = vec.capacity();
-    vec.push_back(3);  // должно вызвать reserve()
+    vec.push_back(3);  // should cause reserve()
     return TestSystem::check(true, vec.capacity() > cap_before);
 }
 
@@ -283,14 +283,14 @@ int main() {
     setlocale(LC_ALL, "Russian");
     TestSystem::print_init_info();
 
-    // Конструкторы
+    // Constructors
     RUN_TEST(test_default_constructor);
     RUN_TEST(test_constructor_with_size);
     RUN_TEST(test_initializer_list_constructor);
     RUN_TEST(test_array_constructor);
     RUN_TEST(test_null_memory);
 
-    // Изменения элементов
+    // Changes in elements
     RUN_TEST(test_push_front);
     RUN_TEST(test_push_back);
     RUN_TEST(test_pop_back);
@@ -302,7 +302,7 @@ int main() {
     RUN_TEST(test_clear_then_push_back);
     RUN_TEST(test_assign_fill);
 
-    // Работа с памятью
+    // Work with memory
     RUN_TEST(test_shrink_to_fit_clears_deleted);
     RUN_TEST(test_shrink_to_fit_empty_vector);
     RUN_TEST(test_shrink_to_fit_no_action_when_full);
@@ -311,7 +311,7 @@ int main() {
     RUN_TEST(test_resize_expand_size);
     RUN_TEST(test_ensure_capacity_triggers_reserve);
 
-    // Операторы
+    // Operators
     RUN_TEST(test_index_operator);
     RUN_TEST(test_at_operator);
     RUN_TEST(test_at_operator_exception);
