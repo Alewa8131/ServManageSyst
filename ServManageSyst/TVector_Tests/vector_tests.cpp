@@ -1,8 +1,8 @@
 // Copyright 2025 Alewa8131
-#include <iostream>
-
-#include <clocale>
 #include <windows.h>
+#include <clocale>
+
+#include <iostream>
 
 #include "../TVector/my_vector.h"
 
@@ -15,65 +15,67 @@ void set_color(int text_color, int bg_color) {
 #define RUN_TEST(test) TestSystem::start_test(test, #test)
 
 namespace TestSystem {
-int count_success = 0, count_failed = 0;
+    int count_success = 0, count_failed = 0;
 
-void start_test(bool(*test)(), const char* name_of_test) {
-    set_color(2, 0);
-    std::cout << "[ RUN      ] ";
-    set_color(7, 0);
-    std::cout << "Object." << name_of_test << std::endl;
-
-    bool status = test();
-
-    if (status == true) {
+    void start_test(bool(*test)(), const char* name_of_test) {
         set_color(2, 0);
-        std::cout << "[       OK ]" << std::endl;
-        count_success++;
-    } else {
-        set_color(4, 0);
-        std::cout << "[  FAILED  ]" << std::endl;
-        count_failed++;
-    }
-    set_color(7, 0);
-}
-
-template <class T1, class T2>
-bool check(const T1& expected, const T2& actual) {
-    if (expected == actual) {
-        return true;
-    } else {
-        std::cerr << "Expected: " << expected
-            << ", Actual: " << actual << std::endl;
-        return false;
-    }
-}
-
-void print_init_info() {
-    set_color(2, 0);
-    std::cout << "[==========] " << std::endl;
-    set_color(7, 0);
-}
-
-void print_final_info() {
-    set_color(2, 0);
-    std::cout << "[==========] ";
-    set_color(7, 0);
-    std::cout << count_success + count_failed << " test" <<
-        (count_success + count_failed > 1 ? "s" : "") << " ran." << std::endl;
-    set_color(2, 0);
-    std::cout << "[  PASSED  ] ";
-    set_color(7, 0);
-    std::cout << count_success << " test" <<
-        (count_success > 1 ? "s" : "") << std::endl;
-    if (count_failed > 0) {
-        set_color(4, 0);
-        std::cout << "[  FAILED  ] ";
+        std::cout << "[ RUN      ] ";
         set_color(7, 0);
-        std::cout << count_failed << " test" <<
-            (count_failed > 1 ? "s." : ".") << std::endl;
+        std::cout << "Object." << name_of_test << std::endl;
+
+        bool status = test();
+
+        if (status == true) {
+            set_color(2, 0);
+            std::cout << "[       OK ]" << std::endl;
+            count_success++;
+        }
+        else {
+            set_color(4, 0);
+            std::cout << "[  FAILED  ]" << std::endl;
+            count_failed++;
+        }
+        set_color(7, 0);
     }
-}
-}  // namespace TestSystem
+
+    template <class T1, class T2>
+    bool check(const T1& expected, const T2& actual) {
+        if (expected == actual) {
+            return true;
+        }
+        else {
+            std::cerr << "Expected: " << expected
+                << ", Actual: " << actual << std::endl;
+            return false;
+        }
+    }
+
+    void print_init_info() {
+        set_color(2, 0);
+        std::cout << "[==========] " << std::endl;
+        set_color(7, 0);
+    }
+
+    void print_final_info() {
+        set_color(2, 0);
+        std::cout << "[==========] ";
+        set_color(7, 0);
+        std::cout << count_success + count_failed << " test" <<
+            (count_success + count_failed > 1 ? "s" : "") << " ran." << std::endl;
+        set_color(2, 0);
+        std::cout << "[  PASSED  ] ";
+        set_color(7, 0);
+        std::cout << count_success << " test" <<
+            (count_success > 1 ? "s" : "") << std::endl;
+        if (count_failed > 0) {
+            set_color(4, 0);
+            std::cout << "[  FAILED  ] ";
+            set_color(7, 0);
+            std::cout << count_failed << " test" <<
+                (count_failed > 1 ? "s." : ".") << std::endl;
+        }
+    }
+};  // namespace TestSystem
 
 
 bool test_default_constructor() {
@@ -329,7 +331,7 @@ bool test_hoar_sort_empty() {
     return TestSystem::check(0u, vec.size());
 }
 bool test_hoar_sort_duplicates() {
-    TVector<int> vec = { 3, 1, 2, 1 ,3 };
+    TVector<int> vec = { 3, 1, 2, 1, 3 };
 
     hoar_sort(vec);
 

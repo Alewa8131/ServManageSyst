@@ -7,19 +7,6 @@
 
 enum State { empty, busy, deleted };
 
-namespace algorithms {
-    template <class T>
-    void swap(T& a, T& b);
-}
-
-template <class T>
-void algorithms::swap(T& a, T& b) {
-    T c;
-    c = a;
-    a = b;
-    b = c;
-}
-
 template <class T>
 class TVector {
     T* _data = nullptr;
@@ -36,9 +23,9 @@ class TVector {
      explicit TVector(const T(&arr)[N]);
      TVector(const T* arr, size_t size);
      TVector(const TVector& other);
-     //
+
      ~TVector();
-     //
+
      inline bool is_empty() const noexcept;
      inline size_t size() const noexcept;
      inline size_t capacity() const noexcept;
@@ -46,32 +33,32 @@ class TVector {
      inline T* begin() noexcept;
      inline T* end() noexcept;
      inline T& front() noexcept;
-     //
+
      T& back() noexcept;
      T& at(size_t pos);
      const T& at(size_t pos) const;
-     //
+
      void push_front(const T& value);
      void push_back(const T& value);
      void insert(size_t pos, const T& value);
-     //
+
      void pop_front();
      void pop_back();
      void erase(size_t pos);
-     //
+
      void emplace(size_t pos, const T& value);
      void clear();
      void assign(size_t count, const T& value);
-     //
+
      void shrink_to_fit();
-     //
+
      void resize(size_t new_size);
-     //
+
      bool operator==(const TVector& other) const;
      bool operator!=(const TVector& other) const;
      TVector& operator=(const TVector& other);
      T& operator[](size_t pos) noexcept;
-     //
+
      template <class T>
      friend void shuffle(TVector<T>& vec);
      template <class T>
@@ -177,7 +164,7 @@ T& TVector<T>::at(size_t pos) {
     throw std::out_of_range("TVector::at - logical error");
 }
 template <class T>
-const T& TVector<T>::at(size_t pos) const { // Выдать ошибку при выходе за границы
+const T& TVector<T>::at(size_t pos) const { 
     if (pos >= _size) throw std::out_of_range("TVector::at");
 
     size_t count = 0;
@@ -464,10 +451,15 @@ TVector<T>& TVector<T>::operator=(const TVector& other) {
     return *this;
 }
 template <class T>
-T& TVector<T>::operator[](size_t pos) noexcept { // Только сущ элементы
-    if (pos <= _capacity && pos >= 0) {
-        return _data[pos];
+T& TVector<T>::operator[](size_t pos) noexcept { 
+    size_t count = 0;
+    for (size_t i = 0; i < _capacity; ++i) {
+        if (_states[i] == busy) {
+            if (count == pos) return _data[i];
+            ++count;
+        }
     }
+    if (_capacity != 0) { return _data[0]; }
 }
 
 template <class T>
@@ -547,6 +539,13 @@ void TVector<T>::my_copy(InputIt first, InputIt last, OutputIt dest) {
 
 
 template <class T>
+void swp(T& a, T& b) {
+    T c;
+    c = a;
+    a = b;
+    b = c;
+}
+template <class T>
 void shuffle(TVector<T>& vec) {  // Use srand(time(0));
     size_t n = vec.size();
     if (n <= 1) {
@@ -554,7 +553,7 @@ void shuffle(TVector<T>& vec) {  // Use srand(time(0));
     }
     for (size_t i = n - 1; i > 0; --i) {
         size_t j = rand() % (i + 1);
-        algorithms::swap(vec[i], vec[j]);
+        swp(vec[i], vec[j]);
     }
 }
 template <class T>
@@ -570,7 +569,7 @@ void hoar_sort_rec(TVector<T>& vec, int left, int right) {
         while (vec.at(j) > base) --j;
 
         if (i <= j) {
-            algorithms::swap(vec.at(i), vec.at(j));
+            swp(vec.at(i), vec.at(j));
             ++i;
             --j;
         }
@@ -586,7 +585,7 @@ void hoar_sort(TVector<T>& vec) {
 }
 
 template <class T>
-int find_first(const TVector<T>& vec, const T& value) { // Не реализовывать через at
+int find_first(const TVector<T>& vec, const T& value) {  // Dont use at
     for (size_t i = 0; i < vec.size(); ++i) {
         if (vec.at(i) == value) {
             return i;
