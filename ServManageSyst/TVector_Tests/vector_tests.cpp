@@ -1,10 +1,11 @@
 // Copyright 2025 Alewa8131
+#include <iostream>
+
 #include <clocale>
 #include <windows.h>
 
-#include <iostream>
-
 #include "../TVector/my_vector.h"
+
 
 void set_color(int text_color, int bg_color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -118,6 +119,13 @@ bool test_push_front() {
         TestSystem::check(7, vec.at(0)) &&
         TestSystem::check(42, vec.at(1));
 }
+bool test_push_front_after_delete() {
+    TVector<int> vec = {1, 2, 3, 4};
+    vec.pop_front();
+    vec.push_front(7);
+    return TestSystem::check(4u, vec.size()) &&
+        TestSystem::check(7, vec.at(0));
+}
 bool test_push_back() {
     TVector<int> vec;
     vec.push_back(10);
@@ -131,6 +139,14 @@ bool test_pop_back() {
     vec.pop_back();
     return TestSystem::check(2u, vec.size()) &&
         TestSystem::check(2, vec.back());
+}
+bool test_pop_two_back() {
+    TVector<int> vec = { 1, 2, 3 };
+    vec.pop_back();
+    vec.pop_back();
+    return TestSystem::check(1u, vec.size()) &&
+        TestSystem::check(1, vec.back()) &&
+        TestSystem::check(1, vec.front());
 }
 bool test_erase() {
     TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -236,7 +252,7 @@ bool test_resize_expand_size() {
 bool test_ensure_capacity_triggers_reserve() {
     TVector<int> vec;
     vec.push_back(1);
-    vec.push_back(2);  // _capacity illed
+    vec.push_back(2);  // _capacity filled
     size_t cap_before = vec.capacity();
     vec.push_back(3);  // should cause reserve()
     return TestSystem::check(true, vec.capacity() > cap_before);
@@ -249,9 +265,10 @@ bool test_index_operator() {
     return TestSystem::check(100, vec.at(1));
 }
 bool test_at_operator() {
-    TVector<int> vec = { 1, 2, 3 };
+    TVector<int> vec = { 1, 2, 3, 4 };
     try {
-        return TestSystem::check(2, vec.at(1));
+        vec.erase(1);
+        return TestSystem::check(3, vec.at(1));
     }
     catch (...) {
         return false;
@@ -288,6 +305,55 @@ bool test_shuffle_single_element() {
     vec.push_back(777);
     shuffle(vec);
     return TestSystem::check(1u, vec.size()) && TestSystem::check(777, vec[0]);
+}
+
+bool test_hoar_sort_deleted() {
+    TVector<int> vec = {5, 2, 9, 1, 4, 13, 18, 3};
+    vec.resize(10);
+    vec.erase(2);
+    vec.erase(2);
+
+    hoar_sort(vec);
+
+    return TestSystem::check(6u, vec.size()) &&
+        TestSystem::check(2, vec.at(0)) &&
+        TestSystem::check(3, vec.at(1)) &&
+        TestSystem::check(4, vec.at(2)) &&
+        TestSystem::check(5, vec.at(3)) &&
+        TestSystem::check(13, vec.at(4)) &&
+        TestSystem::check(18, vec.at(5));
+}
+bool test_hoar_sort_empty() {
+    TVector<int> vec;
+    hoar_sort(vec);
+    return TestSystem::check(0u, vec.size());
+}
+bool test_hoar_sort_duplicates() {
+    TVector<int> vec = { 3, 1, 2, 1 ,3 };
+
+    hoar_sort(vec);
+
+    return TestSystem::check(5u, vec.size()) &&
+        TestSystem::check(1, vec.at(0)) &&
+        TestSystem::check(1, vec.at(1)) &&
+        TestSystem::check(2, vec.at(2)) &&
+        TestSystem::check(3, vec.at(3)) &&
+        TestSystem::check(3, vec.at(4));
+}
+bool test_hoar_sort_reverse_sorted() {
+    TVector<int> vec = {5, 4, 3, 2, 1, 0, -1, -2};
+
+    hoar_sort(vec);
+
+    return TestSystem::check(8u, vec.size()) &&
+        TestSystem::check(-2, vec.at(0)) &&
+        TestSystem::check(-1, vec.at(1)) &&
+        TestSystem::check(0, vec.at(2)) &&
+        TestSystem::check(1, vec.at(3)) &&
+        TestSystem::check(2, vec.at(4)) &&
+        TestSystem::check(3, vec.at(5)) &&
+        TestSystem::check(4, vec.at(6)) &&
+        TestSystem::check(5, vec.at(7));
 }
 
 bool test_find_first_basic() {
@@ -334,8 +400,10 @@ int main() {
 
     // Changes in elements
     RUN_TEST(test_push_front);
+    RUN_TEST(test_push_front_after_delete);
     RUN_TEST(test_push_back);
     RUN_TEST(test_pop_back);
+    RUN_TEST(test_pop_two_back);
     RUN_TEST(test_erase);
     RUN_TEST(test_insert_middle);
     RUN_TEST(test_emplace_replace);
@@ -363,6 +431,12 @@ int main() {
     // Shuffle
     RUN_TEST(test_shuffle_empty_vector);
     RUN_TEST(test_shuffle_single_element);
+
+    // Sort
+    RUN_TEST(test_hoar_sort_deleted);
+    RUN_TEST(test_hoar_sort_empty);
+    RUN_TEST(test_hoar_sort_duplicates);
+    RUN_TEST(test_hoar_sort_reverse_sorted);
 
     // Find
     RUN_TEST(test_find_first_basic);
