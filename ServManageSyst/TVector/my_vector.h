@@ -5,6 +5,8 @@
 #include <random>
 #include <cstddef>
 
+std::mt19937 engine(std::time(nullptr));
+
 enum State { empty, busy, deleted };
 
 template <class T>
@@ -554,7 +556,7 @@ void shuffle(TVector<T>& vec) {  // Use srand(time(0));
         return;
     }
     for (size_t i = n - 1; i > 0; --i) {
-        size_t j = rand() % (i + 1);
+        size_t j = engine() % (i + 1);
         swp(vec[i], vec[j]);
     }
 }

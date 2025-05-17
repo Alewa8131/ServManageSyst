@@ -1,8 +1,10 @@
 // Copyright 2025 Alewa8131
 #include <windows.h>
 #include <clocale>
+#include <ctime>
 
 #include <iostream>
+#include <random>
 
 #include "../TVector/my_vector.h"
 
@@ -388,7 +390,6 @@ bool test_find_all_empty_result() {
 
 int main() {
     setlocale(LC_ALL, "Russian");
-    srand(time(0));
     TestSystem::print_init_info();
 
     // Constructors
