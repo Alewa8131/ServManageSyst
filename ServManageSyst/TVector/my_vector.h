@@ -164,7 +164,7 @@ T& TVector<T>::at(size_t pos) {
     throw std::out_of_range("TVector::at - logical error");
 }
 template <class T>
-const T& TVector<T>::at(size_t pos) const { 
+const T& TVector<T>::at(size_t pos) const {
     if (pos >= _size) throw std::out_of_range("TVector::at");
 
     size_t count = 0;
@@ -451,7 +451,7 @@ TVector<T>& TVector<T>::operator=(const TVector& other) {
     return *this;
 }
 template <class T>
-T& TVector<T>::operator[](size_t pos) noexcept { 
+T& TVector<T>::operator[](size_t pos) noexcept {
     size_t count = 0;
     for (size_t i = 0; i < _capacity; ++i) {
         if (_states[i] == busy) {
@@ -459,7 +459,9 @@ T& TVector<T>::operator[](size_t pos) noexcept {
             ++count;
         }
     }
-    if (_capacity != 0) { return _data[0]; }
+    if (_capacity != 0) {
+        return _data[0];
+    }
 }
 
 template <class T>
