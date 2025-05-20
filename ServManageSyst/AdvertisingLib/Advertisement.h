@@ -5,11 +5,11 @@
 
 class Advertisement {
  private:
-    std::string name;
-    Server* targetServer;
-    double cost;
-    double duration;
-    std::string status;
+    std::string _name;
+    Server* _targetServer;
+    double _cost;
+    double _duration;
+    std::string _status;
 
  public:
     void start();

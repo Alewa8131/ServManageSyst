@@ -5,11 +5,11 @@
 
 class Event {
  private:
-    int id;
-    std::string name;
-    DateTime startDate;
-    double duration;
-    std::string status;
+    int _id;
+    std::string _name;
+    DateTime _startDate;
+    double _duration;
+    std::string _status;
     // std::vector<Player*> participants;
  public:
     void registerPlayer(Player* p);

@@ -5,12 +5,12 @@
 
 class Server {
  private:
-    std::string name;
-    std::string ip;
+    std::string _name;
+    std::string _ip;
     // std::vector<Player*> players;
     // std::vector<class Event*> events;
-    double rentCost;
-    double uptime;
+    double _rentCost;
+    double _uptime;
 
  public:
     void setName(const std::string& name);

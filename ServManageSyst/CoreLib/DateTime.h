@@ -4,7 +4,7 @@
 
 class DateTime {
  private:
-    int day, month, year, hour, minute;
+    int _day, _month, _year, _hour, _minute;
 
  public:
     DateTime();

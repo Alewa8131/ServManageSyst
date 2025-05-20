@@ -5,10 +5,10 @@
 
 class Privilege {
  private:
-    std::string name;
-    double price;
-    DateTime purchaseDate;
-    int durationDays;
+    std::string _name;
+    double _price;
+    DateTime _purchaseDate;
+    int _durationDays;
 
  public:
     void setName(const std::string& name);

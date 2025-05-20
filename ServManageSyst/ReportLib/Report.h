@@ -5,15 +5,15 @@
 
 class Report {
  private:
-    int id;
-    Player* author;
-    std::string content;
-    std::string reportType;  // "cheating", "abuse"
-    Player* reportedPlayer;
-    std::string status;  // "pending", "reviewed"
-    std::string verdict;
-    DateTime submissionDate;
-    DateTime decisionDate;
+    int _id;
+    Player* _author;
+    std::string _content;
+    std::string _reportType;  // "cheating", "abuse"
+    Player* _reportedPlayer;
+    std::string _status;  // "pending", "reviewed"
+    std::string _verdict;
+    DateTime _submissionDate;
+    DateTime _decisionDate;
 
  public:
     void setContent(const std::string& text);

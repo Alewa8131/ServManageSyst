@@ -4,8 +4,8 @@
 
 class User {
  protected:
-    int id;
-    std::string username;
+    int _id;
+    std::string _username;
 
  public:
     virtual ~User() = default;

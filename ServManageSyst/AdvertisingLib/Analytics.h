@@ -4,11 +4,11 @@
 
 class Analytics {
  private:
-    std::string reportPeriod;
-    double newPlayers;
-    double activePercentage;
-    double avgCheck;
-    double profit;
+    std::string _reportPeriod;
+    double _newPlayers;
+    double _activePercentage;
+    double _avgCheck;
+    double _profit;
 
  public:
     void calculate();

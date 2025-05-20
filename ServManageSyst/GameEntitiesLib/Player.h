@@ -9,12 +9,12 @@ class Server;
 
 class Player : public User {
  private:
-    Server* server;
-    DateTime joinDate;
-    Privilege* privilege;
-    int minutesPlayed;
-    std::string status;  // "active", "inactive", "banned"
-    double moneySpent;
+    Server* _server;
+    DateTime _joinDate;
+    Privilege* _privilege;
+    int _minutesPlayed;
+    std::string _status;  // "active", "inactive", "banned"
+    double _moneySpent;
     // std::vector<Privilege*> privilegeHistory;
  public:
     void setName(const std::string& name);
