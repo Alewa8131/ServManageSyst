@@ -237,7 +237,8 @@ bool test_resize_expand() {
     TVector<int> vec = { 1, 2 };
     vec.resize(15);
     return TestSystem::check(15u, vec.capacity()) &&
-        TestSystem::check(0, vec[3]);
+        TestSystem::check(1, vec[0]) &&
+        TestSystem::check(2, vec[1]);
 }
 bool test_resize_shrink() {
     TVector<int> vec = { 1, 2, 3, 4 };

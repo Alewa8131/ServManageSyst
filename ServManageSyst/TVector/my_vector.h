@@ -64,9 +64,9 @@ class TVector {
      template <class T>
      friend void shuffle(TVector<T>& vec);
      template <class T>
-     friend int find_first(const TVector<T>& vec, const T& value);
+     friend int find_first(TVector<T>& vec, const T& value);
      template <class T>
-     friend int find_last(const TVector<T>& vec, const T& value);
+     friend int find_last(TVector<T>& vec, const T& value);
      template <class T>
      friend TVector<size_t> find_all(const TVector<T>& vec, const T& value);
 
@@ -76,7 +76,7 @@ class TVector {
      void reserve(size_t new_cap, size_t start_index = 0);
      void clear_tail(T* data, State* states, size_t from, size_t to);
      void free_memory();
-     //
+
      template <typename InputIt, typename OutputIt>
      void my_copy(InputIt first, InputIt last, OutputIt dest);
 };
@@ -589,28 +589,28 @@ void hoar_sort(TVector<T>& vec) {
 }
 
 template <class T>
-int find_first(const TVector<T>& vec, const T& value) {  // Dont use at
+int find_first(TVector<T>& vec, const T& value) {  // Dont use at
     for (size_t i = 0; i < vec.size(); ++i) {
-        if (vec.at(i) == value) {
+        if (vec[i] == value) {
             return i;
         }
     }
     return -1;
 }
 template <class T>
-int find_last(const TVector<T>& vec, const T& value) {
+int find_last(TVector<T>& vec, const T& value) {
     for (size_t i = vec.size(); i-- > 0;) {
-        if (vec.at(i) == value) {
+        if (vec[i] == value) {
             return i;
         }
     }
     return -1;
 }
 template <class T>
-TVector<size_t> find_all(const TVector<T>& vec, const T& value) {
+TVector<size_t> find_all(TVector<T>& vec, const T& value) {
     TVector<size_t> result;
     for (size_t i = 0; i < vec.size(); ++i) {
-        if (vec.at(i) == value) {
+        if (vec[i] == value) {
             result.push_back(i);
         }
     }
