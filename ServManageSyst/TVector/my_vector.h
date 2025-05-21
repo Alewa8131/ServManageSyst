@@ -5,7 +5,7 @@
 #include <random>
 #include <cstddef>
 
-std::mt19937 engine(std::time(nullptr));
+extern std::mt19937 engine;
 
 enum State { empty, busy, deleted };
 
@@ -60,6 +60,7 @@ class TVector {
      bool operator!=(const TVector& other) const;
      TVector& operator=(const TVector& other);
      T& operator[](size_t pos) noexcept;
+     const T& operator[](size_t pos) const noexcept;
 
      template <class T>
      friend void shuffle(TVector<T>& vec);
@@ -465,6 +466,19 @@ T& TVector<T>::operator[](size_t pos) noexcept {
         return _data[0];
     }
 }
+template<class T>
+const T& TVector<T>::operator[](size_t pos) const noexcept {
+    size_t count = 0;
+    for (size_t i = 0; i < _capacity; ++i) {
+        if (_states[i] == busy) {
+            if (count == pos) return _data[i];
+            ++count;
+        }
+    }
+    if (_capacity != 0) {
+        return _data[0];
+    }
+}
 
 template <class T>
 inline bool TVector<T>::is_full() const noexcept {
@@ -514,7 +528,6 @@ void TVector<T>::reserve(size_t new_cap, size_t start_index) {
 template <class T>
 void TVector<T>::clear_tail(T* data, State* states, size_t from, size_t to) {
     for (size_t k = from; k < to; ++k) {
-        data[k] = 0;
         states[k] = empty;
     }
 }
@@ -550,7 +563,7 @@ void swp(T& a, T& b) {
     b = c;
 }
 template <class T>
-void shuffle(TVector<T>& vec) {  // Use srand(time(0));
+void shuffle(TVector<T>& vec) {  // Use std::mt19937 engine(std::time(nullptr));
     size_t n = vec.size();
     if (n <= 1) {
         return;

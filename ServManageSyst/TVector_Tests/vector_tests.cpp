@@ -8,6 +8,7 @@
 
 #include "../TVector/my_vector.h"
 
+std::mt19937 engine(std::time(nullptr));
 
 void set_color(int text_color, int bg_color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
