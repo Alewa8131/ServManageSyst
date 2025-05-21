@@ -1,6 +1,6 @@
 // Copyright 2025 Alewa8131
 #include "DateTime.h"
-
+#include <string>
 #include <iostream>
 
 DateTime::DateTime() {
@@ -115,5 +115,7 @@ bool DateTime::operator<(const DateTime& other) const {
         return true;
     } else if (this->_second < other._second) {
         return true;
-    } else return false;
+    } else {
+        return false;
+    }
 }
