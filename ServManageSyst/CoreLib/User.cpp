@@ -1,10 +1,13 @@
 // Copyright 2025 Alewa8131
 #include "User.h"
+#include <string>
 
 User::User() : _id(0), _username(""), _password(""), _role(UserRole::Player) {}
-User::User(int id, const std::string& username, const std::string& password, UserRole role)
+User::User(int id, const std::string& username,
+    const std::string& password, UserRole role)
     : _id(id), _username(username), _password(password), _role(role) {}
-User::User(const std::string& username, const std::string& password, UserRole role) {
+User::User(const std::string& username,
+    const std::string& password, UserRole role) {
     TVector<User> users = load_all_users(USER_DB_PATH);
     if (find_index_by_username(users, username)) {
         throw std::runtime_error("Username already taken");
@@ -59,7 +62,8 @@ User User::from_csv_line(const std::string& line) {
     std::getline(ss, role_str, ',');
 
     int id = std::stoi(id_str);
-    UserRole role = (role_str == "Moderator") ? UserRole::Moderator : UserRole::Player;
+    UserRole role = (role_str == "Moderator")
+        ? UserRole::Moderator : UserRole::Player;
 
     return User(id, username, password, role);
 }

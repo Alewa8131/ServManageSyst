@@ -18,8 +18,10 @@ class User {
 
  public:
     User();
-    User(int id, const std::string& username, const std::string& password, UserRole role);
-    User(const std::string& username, const std::string& password, UserRole role);
+    User(int id, const std::string& username,
+        const std::string& password, UserRole role);
+    User(const std::string& username,
+        const std::string& password, UserRole role);
     virtual ~User() = default;
     User create_user();
 
@@ -36,12 +38,14 @@ class User {
 
     // DataBase
     static TVector<User> load_all_users(const std::string& filename);
-    static bool save_all_users(const TVector<User>& users, const std::string& filename);
+    static bool save_all_users(const TVector<User>& users,
+        const std::string& filename);
     static int get_next_id(const TVector<User>& users);
     static bool add_user(const User& new_user, const std::string& filename);
     bool update_user_in_file(const std::string& filename) const;
     static int find_index_by_id(const TVector<User>& users, int id);
-    static int find_index_by_username(const TVector<User>& users, const std::string& username);
+    static int find_index_by_username(const TVector<User>& users,
+        const std::string& username);
 
     // CSV convet
     static User from_csv_line(const std::string& line);
