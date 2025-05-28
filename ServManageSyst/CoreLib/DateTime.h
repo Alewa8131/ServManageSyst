@@ -9,8 +9,15 @@ class DateTime {
  public:
     DateTime();
     DateTime(int d, int m, int y, int h, int min, int s);
+    void add_days(int days);
     void set_current();
     std::string to_string() const;
+    static DateTime from_string(const std::string& str);
     bool isPast() const;
     bool operator<(const DateTime& other) const;
+
+    bool is_leap(int year) const;
+    int days_in_month(int month, int year) const;
+    int days_since_epoch() const;
+    int difference_in_days(const DateTime& other) const;
 };

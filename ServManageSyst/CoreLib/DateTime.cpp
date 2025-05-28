@@ -22,27 +22,35 @@ DateTime::DateTime(int d, int m, int y, int h = 0, int min = 0, int s = 0) {
         d += h / 24;
         h = h % 24;
     }
-    if (d > 31 && ((m == 1) || (m == 3) || (m == 5)
-        || (m == 7) || (m == 8) || (m == 10) || (m == 12))) {
-        m += d / 31;
-        d = d % 31;
-    } else if (d > 30 && ((m == 4) || (m == 6) || (m == 9) || (m == 11))) {
-        m += d / 30;
-        d = d % 30;
-    } else if (d > 29 && m == 2 && y % 4 == 0) {
-        m += d / 29;
-        d = d % 29;
-    } else if (d > 28 && m == 2) {
-        m += d / 28;
-        d = d % 28;
-    }
-    if (m >= 13) {
-        y += m / 12;
-        m = m % 12;
+    while (true) {
+        int DinM = days_in_month(m, y);
+        if (d <= DinM) break;
+        d -= DinM;
+        m++;
+        if (m > 12) {
+            m = 1;
+            y++;
+        }
     }
     _day = d; _month = m; _year = y; _hour = h; _minute = min; _second = s;
 }
 
+void DateTime::add_days(int days) {
+    _day += days;
+
+    while (true) {
+        int currentDays = days_in_month(_month, _year);
+        if (_day <= currentDays) break;
+
+        _day -= currentDays;
+        _month++;
+
+        if (_month > 12) {
+            _month = 1;
+            _year++;
+        }
+    }
+}
 void DateTime::set_current() {
     std::time_t now = std::time(nullptr);
     std::tm timeInfo;
@@ -78,28 +86,44 @@ std::string DateTime::to_string() const {
 
     return result;
 }
+DateTime DateTime::from_string(const std::string& str) {
+    int d = 0, m = 0, y = 0;
+    int h = 0, min = 0, s = 0;
+
+    if (str.find('.') != std::string::npos) {
+        // Есть дата: dd.mm.yyyy или dd.mm.yyyy hh:mm:ss
+        if (str.length() < 10)
+            throw std::invalid_argument("Too short for date format: " + str);
+        d = (str[0] - '0') * 10 + (str[1] - '0');
+        m = (str[3] - '0') * 10 + (str[4] - '0');
+        y = (str[6] - '0') * 1000 + (str[7] - '0') * 100 + (str[8] - '0') * 10 + (str[9] - '0');
+
+        if (str.length() > 11 && str[10] == ' ') {
+            // Есть время
+            h = (str[11] - '0') * 10 + (str[12] - '0');
+            min = (str[14] - '0') * 10 + (str[15] - '0');
+            s = (str[17] - '0') * 10 + (str[18] - '0');
+        }
+    }
+    else if (str.find(':') != std::string::npos) {
+        // Только время: hh:mm:ss
+        if (str.length() != 8)
+            throw std::invalid_argument("Invalid time format: " + str);
+        h = (str[0] - '0') * 10 + (str[1] - '0');
+        min = (str[3] - '0') * 10 + (str[4] - '0');
+        s = (str[6] - '0') * 10 + (str[7] - '0');
+    }
+    else {
+        throw std::invalid_argument("Unrecognized DateTime format: " + str);
+    }
+
+    return DateTime(d, m, y, h, min, s);
+}
+
 
 bool DateTime::isPast() const {
-    std::time_t now = std::time(nullptr);
-    std::tm current;
-    localtime_s(&current, &now);
-
-    if (_year < current.tm_year + 1900) return true;
-    if (_year > current.tm_year + 1900) return false;
-
-    if (_month < current.tm_mon + 1) return true;
-    if (_month > current.tm_mon + 1) return false;
-
-    if (_day < current.tm_mday) return true;
-    if (_day > current.tm_mday) return false;
-
-    if (_hour < current.tm_hour) return true;
-    if (_hour > current.tm_hour) return false;
-
-    if (_minute < current.tm_min) return true;
-    if (_minute > current.tm_min) return false;
-
-    return _second < current.tm_sec;
+    DateTime now;
+    return *this < now;
 }
 
 bool DateTime::operator<(const DateTime& other) const {
@@ -118,4 +142,34 @@ bool DateTime::operator<(const DateTime& other) const {
     } else {
         return false;
     }
+}
+
+bool DateTime::is_leap(int year) const {
+    return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+}
+int DateTime::days_in_month(int month, int year) const {
+    switch (month) {
+    case 1: case 3: case 5: case 7:
+    case 8: case 10: case 12: return 31;
+
+    case 4: case 6: case 9: case 11: return 30;
+
+    case 2: return is_leap(year) ? 29 : 28;
+    default: return 0;
+    }
+}
+
+int DateTime::days_since_epoch() const {
+    int days = _day;
+
+    for (int m = 1; m < _month; ++m)
+        days += days_in_month(m, _year);
+
+    for (int y = 0; y < _year; ++y)
+        days += is_leap(y) ? 366 : 365;
+
+    return days;
+}
+int DateTime::difference_in_days(const DateTime& other) const {
+    return other.days_since_epoch() - this->days_since_epoch();
 }
