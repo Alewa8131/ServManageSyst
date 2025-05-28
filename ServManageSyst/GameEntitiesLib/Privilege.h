@@ -11,7 +11,8 @@ class Privilege {
 
  public:
     Privilege();
-    Privilege(const std::string& name, double price, const DateTime& purchase_date);
+    Privilege(const std::string& name, double price,
+        const DateTime& purchase_date);
 
     void set_name(const std::string& name);
     void set_price(double price);

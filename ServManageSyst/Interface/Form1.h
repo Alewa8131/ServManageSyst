@@ -14,8 +14,7 @@ namespace ServManageSyst {
     using namespace System::Drawing;
     using namespace System::IO;
 
-    public ref class Form1 : public System::Windows::Forms::Form
-    {
+    public ref class Form1 : public System::Windows::Forms::Form {
     public:
         Form1(void) {
             InitializeComponent();

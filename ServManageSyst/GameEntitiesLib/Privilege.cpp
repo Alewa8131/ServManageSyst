@@ -6,7 +6,7 @@
 Privilege::Privilege()
     : _name("None"), _price(0.0), _purchase_date(DateTime::DateTime()) {}
 
-Privilege::Privilege(const std::string& name, 
+Privilege::Privilege(const std::string& name,
     double price, const DateTime& purchase_date)
     : _name(name), _price(price), _purchase_date(purchase_date) {}
 
