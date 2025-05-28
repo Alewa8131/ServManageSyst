@@ -2,20 +2,21 @@
 #pragma once
 #include <string>
 #include "../GameEntitiesLib/Event.h"
+#include "../TVector/my_vector.h"
 
 class Server {
  private:
     std::string _name;
     std::string _ip;
-    // std::vector<Player*> players;
-    // std::vector<class Event*> events;
-    double _rentCost;
+    TVector<Player*> _players;
+    TVector<class Event*> _events;
+    double _rent_cost;
     double _uptime;
 
  public:
-    void setName(const std::string& name);
-    void addPlayer(Player* player);
-    void removePlayer(int playerId);
-    void createEvent(Event* event);
-    void printStats() const;
+    void set_name(const std::string& name);
+    void add_player(Player* player);
+    void remove_player(int playerId);
+    void create_event(Event* event);
+    void print_stats() const;
 };

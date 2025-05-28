@@ -1,2 +1,10 @@
 // Copyright 2025 Alewa8131
 #include "Server.h"
+
+void Server::set_name(const std::string& name) {
+    _name = name;
+}
+
+void Server::add_player(Player* player) {
+    _players.push_back(player);
+}

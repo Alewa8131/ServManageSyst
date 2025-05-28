@@ -2,6 +2,7 @@
 #pragma once
 #include <string>
 #include "../GameEntitiesLib/Player.h"
+#include "../TVector/my_vector.h"
 
 class Event {
  private:
@@ -10,7 +11,8 @@ class Event {
     DateTime _startDate;
     double _duration;
     std::string _status;
-    // std::vector<Player*> participants;
+    TVector<Player*> _participants;
+
  public:
     void registerPlayer(Player* p);
     int getParticipantCount() const;
