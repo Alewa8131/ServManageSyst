@@ -1,6 +1,8 @@
 // Copyright 2025 Alewa8131
 #include "Server.h"
 
+#include <string>
+
 void Server::set_name(const std::string& name) {
     _name = name;
 }

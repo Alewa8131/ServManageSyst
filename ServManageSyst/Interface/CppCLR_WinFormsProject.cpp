@@ -1,3 +1,4 @@
+// Copyright 2025 Alewa8131
 #include "pch.h"
 
 using namespace System;
@@ -12,8 +13,7 @@ using namespace System;
 using namespace System::Windows::Forms;
 
 [STAThread]
-int main()
-{
+int main() {
   Application::EnableVisualStyles();
   Application::SetCompatibleTextRenderingDefault(false);
   Application::Run(gcnew ServManageSyst::Form1());

@@ -131,7 +131,9 @@ int User::find_index_by_id(const TVector<User>& users, int id) {
     }
     return -1;
 }
-int User::find_index_by_username(const TVector<User>& users, const std::string& username) {
+int User::find_index_by_username(const TVector<User>& users, 
+    const std::string& username) {
+
     for (int i = 0; i < users.size(); ++i) {
         if (users[i].get_username() == username) {
             return i;

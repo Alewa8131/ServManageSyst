@@ -6,7 +6,8 @@
 Privilege::Privilege()
     : _name("None"), _price(0.0), _purchase_date(DateTime::DateTime()) {}
 
-Privilege::Privilege(const std::string& name, double price, const DateTime& purchase_date)
+Privilege::Privilege(const std::string& name, 
+    double price, const DateTime& purchase_date)
     : _name(name), _price(price), _purchase_date(purchase_date) {}
 
 void Privilege::set_name(const std::string& name) {
@@ -52,7 +53,8 @@ DateTime Privilege::get_expiry_date(int valid_days) {
 }
 
 std::string Privilege::to_csv_line() const {
-    return _name + "," + std::to_string(_price) + "," + _purchase_date.to_string();
+    return _name + "," + std::to_string(_price) +
+        "," + _purchase_date.to_string();
 }
 Privilege Privilege::from_csv_line(const std::string& line) {
     size_t pos1 = line.find(',');

@@ -91,29 +91,27 @@ DateTime DateTime::from_string(const std::string& str) {
     int h = 0, min = 0, s = 0;
 
     if (str.find('.') != std::string::npos) {
-        // Есть дата: dd.mm.yyyy или dd.mm.yyyy hh:mm:ss
+        // dd.mm.yyyy or dd.mm.yyyy hh:mm:ss
         if (str.length() < 10)
             throw std::invalid_argument("Too short for date format: " + str);
         d = (str[0] - '0') * 10 + (str[1] - '0');
         m = (str[3] - '0') * 10 + (str[4] - '0');
-        y = (str[6] - '0') * 1000 + (str[7] - '0') * 100 + (str[8] - '0') * 10 + (str[9] - '0');
+        y = (str[6] - '0') * 1000 + (str[7] - '0') * 100
+            + (str[8] - '0') * 10 + (str[9] - '0');
 
         if (str.length() > 11 && str[10] == ' ') {
-            // Есть время
             h = (str[11] - '0') * 10 + (str[12] - '0');
             min = (str[14] - '0') * 10 + (str[15] - '0');
             s = (str[17] - '0') * 10 + (str[18] - '0');
         }
-    }
-    else if (str.find(':') != std::string::npos) {
-        // Только время: hh:mm:ss
+    } else if (str.find(':') != std::string::npos) {
+        // hh:mm:ss
         if (str.length() != 8)
             throw std::invalid_argument("Invalid time format: " + str);
         h = (str[0] - '0') * 10 + (str[1] - '0');
         min = (str[3] - '0') * 10 + (str[4] - '0');
         s = (str[6] - '0') * 10 + (str[7] - '0');
-    }
-    else {
+    } else {
         throw std::invalid_argument("Unrecognized DateTime format: " + str);
     }
 
