@@ -13,8 +13,10 @@ namespace ServManageSyst {
     using namespace System::Data;
     using namespace System::Drawing;
     using namespace System::IO;
+    using namespace msclr::interop;
 
-    public ref class Form1 : public System::Windows::Forms::Form {
+    public ref class Form1 : public System::Windows::Forms::Form
+    {
     public:
         Form1(void) {
             InitializeComponent();
@@ -36,6 +38,9 @@ namespace ServManageSyst {
 
 #pragma region Windows Form Designer generated code
            void InitializeComponent(void) {
+               this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
+               this->Location = System::Drawing::Point(550, 300);
+
                this->textBoxLogin = (gcnew System::Windows::Forms::TextBox());
                this->textBoxPassword = (gcnew System::Windows::Forms::TextBox());
                this->buttonLogin = (gcnew System::Windows::Forms::Button());
@@ -82,20 +87,24 @@ namespace ServManageSyst {
 
         String^ login = textBoxLogin->Text;
         String^ password = textBoxPassword->Text;
-        array<String^>^ lines = File::ReadAllLines("../CoreLib/db/users.csv");
 
-        for each (String ^ line in lines) {
-            array<String^>^ parts = line->Split(',');
-            if (parts->Length >= 4 && parts[1] == login && parts[2] == password) {
-                String^ role = parts[3];
+        std::string loginStd = marshal_as<std::string>(login);
+        std::string passwordStd = marshal_as<std::string>(password);
+
+        TVector<User> users = User::load_all_users(USER_DB_PATH);
+        for (int i = 0; i < users.size(); ++i) {
+            if (users[i].get_username() == loginStd && users[i].get_password() == passwordStd) {
                 this->Hide();
-                if (role == "Player") {
-                    PlayerMenu^ p = gcnew PlayerMenu();
+
+                if (users[i].get_role() == UserRole::Player) {
+                    PlayerMenu^ p = gcnew PlayerMenu(login);
                     p->ShowDialog();
-                } else if (role == "Moderator") {
+                }
+                else if (users[i].get_role() == UserRole::Moderator) {
                     ModeratorMenu^ m = gcnew ModeratorMenu();
                     m->ShowDialog();
                 }
+
                 this->Close();
                 return;
             }

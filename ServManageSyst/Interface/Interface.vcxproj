@@ -80,7 +80,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\GItHubProjects\ServManageSyst\ServManageSyst\General;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\GitHubProjects\ServManageSyst\ServManageSyst\GameEntitiesLib;C:\GitHubProjects\ServManageSyst\ServManageSyst\CoreLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -164,6 +164,14 @@
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.h</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CoreLib\CoreLib.vcxproj">
+      <Project>{3386bb5f-11dd-47d6-9ed1-dbf893a17021}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GameEntitiesLib\GameEntitiesLib.vcxproj">
+      <Project>{47ffd94b-02c3-43c4-a1e6-bd2a03dc01ac}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,10 +3,10 @@
 #include <string>
 #include <iostream>
 
-DateTime::DateTime() {
+Core::DateTime::DateTime() {
     set_current();
 }
-DateTime::DateTime(int d, int m, int y, int h = 0, int min = 0, int s = 0) {
+Core::DateTime::DateTime(int d, int m, int y, int h = 0, int min = 0, int s = 0) {
     if (d < 0 || m < 0 || y < 0 || h < 0 || min < 0) {
         throw std::logic_error("The date cannot be negative!");
     }
@@ -34,8 +34,11 @@ DateTime::DateTime(int d, int m, int y, int h = 0, int min = 0, int s = 0) {
     }
     _day = d; _month = m; _year = y; _hour = h; _minute = min; _second = s;
 }
+Core::DateTime::DateTime(std::string date) {
+    *this = from_string(date);
+}
 
-void DateTime::add_days(int days) {
+void Core::DateTime::add_days(int days) {
     _day += days;
 
     while (true) {
@@ -51,7 +54,7 @@ void DateTime::add_days(int days) {
         }
     }
 }
-void DateTime::set_current() {
+void Core::DateTime::set_current() {
     std::time_t now = std::time(nullptr);
     std::tm timeInfo;
     localtime_s(&timeInfo, &now);
@@ -64,7 +67,7 @@ void DateTime::set_current() {
     _second = timeInfo.tm_sec;
 }
 
-std::string DateTime::to_string() const {
+std::string Core::DateTime::to_string() const {
     std::string result;
 
     if (_day < 10) result += "0";
@@ -86,7 +89,7 @@ std::string DateTime::to_string() const {
 
     return result;
 }
-DateTime DateTime::from_string(const std::string& str) {
+Core::DateTime Core::DateTime::from_string(const std::string& str) {
     int d = 0, m = 0, y = 0;
     int h = 0, min = 0, s = 0;
 
@@ -119,12 +122,12 @@ DateTime DateTime::from_string(const std::string& str) {
 }
 
 
-bool DateTime::isPast() const {
+bool Core::DateTime::isPast() const {
     DateTime now;
     return *this < now;
 }
 
-bool DateTime::operator<(const DateTime& other) const {
+bool Core::DateTime::operator<(const DateTime& other) const {
     if (this->_year < other._year) {
         return true;
     } else if (this->_month < other._month) {
@@ -142,10 +145,10 @@ bool DateTime::operator<(const DateTime& other) const {
     }
 }
 
-bool DateTime::is_leap(int year) const {
+bool Core::DateTime::is_leap(int year) const {
     return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
 }
-int DateTime::days_in_month(int month, int year) const {
+int Core::DateTime::days_in_month(int month, int year) const {
     switch (month) {
     case 1: case 3: case 5: case 7:
     case 8: case 10: case 12: return 31;
@@ -157,7 +160,7 @@ int DateTime::days_in_month(int month, int year) const {
     }
 }
 
-int DateTime::days_since_epoch() const {
+int Core::DateTime::days_since_epoch() const {
     int days = _day;
 
     for (int m = 1; m < _month; ++m)
@@ -168,6 +171,6 @@ int DateTime::days_since_epoch() const {
 
     return days;
 }
-int DateTime::difference_in_days(const DateTime& other) const {
+int Core::DateTime::difference_in_days(const DateTime& other) const {
     return other.days_since_epoch() - this->days_since_epoch();
 }

@@ -4,10 +4,10 @@
 #include <iostream>
 
 Privilege::Privilege()
-    : _name("None"), _price(0.0), _purchase_date(DateTime::DateTime()) {}
+    : _name("None"), _price(0.0), _purchase_date(Core::DateTime::DateTime()) {}
 
 Privilege::Privilege(const std::string& name,
-    double price, const DateTime& purchase_date)
+    double price, const Core::DateTime& purchase_date)
     : _name(name), _price(price), _purchase_date(purchase_date) {}
 
 void Privilege::set_name(const std::string& name) {
@@ -16,7 +16,7 @@ void Privilege::set_name(const std::string& name) {
 void Privilege::set_price(double price) {
     _price = price;
 }
-void Privilege::set_purchase_date(const DateTime& date) {
+void Privilege::set_purchase_date(const Core::DateTime& date) {
     _purchase_date = date;
 }
 
@@ -26,12 +26,12 @@ std::string Privilege::get_name() const {
 double Privilege::get_price() const {
     return _price;
 }
-DateTime Privilege::get_purchase_date() const {
+Core::DateTime Privilege::get_purchase_date() const {
     return _purchase_date;
 }
 
 int Privilege::get_duration_days() const {
-    DateTime now;
+    Core::DateTime now;
     now.set_current();
 
     int days_now = now.days_since_epoch();
@@ -40,14 +40,14 @@ int Privilege::get_duration_days() const {
     return days_now - days_then;
 }
 
-bool Privilege::is_active(int valid_days, const DateTime& now) const {
+bool Privilege::is_active(int valid_days, const Core::DateTime& now) const {
     int purchase_days = _purchase_date.days_since_epoch();
     int current_days = now.days_since_epoch();
 
     return (current_days - purchase_days) < valid_days;
 }
-DateTime Privilege::get_expiry_date(int valid_days) {
-    DateTime copy = _purchase_date;
+Core::DateTime Privilege::get_expiry_date(int valid_days) {
+    Core::DateTime copy = _purchase_date;
     copy.add_days(valid_days);
     return copy;
 }
@@ -72,7 +72,7 @@ Privilege Privilege::from_csv_line(const std::string& line) {
     std::string date_str = line.substr(pos2 + 1);
 
     double price = std::stod(price_str);
-    DateTime date = DateTime::from_string(date_str);
+    Core::DateTime date = Core::DateTime::from_string(date_str);
 
     return Privilege(name, price, date);
 }

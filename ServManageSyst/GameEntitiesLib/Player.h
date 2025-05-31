@@ -5,24 +5,53 @@
 #include "../CoreLib/DateTime.h"
 #include "../TVector/my_vector.h"
 
-class Privilege;
-class Server;
+#include "../GameEntitiesLib/Privilege.h"
+#include "../GameEntitiesLib/Server.h"
+
+constexpr const char* PLAYER_DB_PATH = "../GameEntitiesLib/db/players.csv";
 
 class Player : public User {
- private:
+private:
     Server* _server;
-    DateTime _joinDate;
+    Core::DateTime _join_date;
     Privilege* _privilege;
     int _minutes_played;
     std::string _status;  // "active", "inactive", "banned"
-    double _moneySpent;
-    TVector<Privilege*> privilege_history;
+    double _money_spent;
+    TVector<Privilege*> _privilege_history;
 
- public:
+    void update_in_file();
+
+public:
+    Player();
+    Player(int id,
+        const std::string& username,
+        const std::string& password,
+        const std::string& server_name,
+        const std::string& join_date,
+        const std::string& privilege_name,
+        int minutes_played,
+        const std::string& status,
+        double money_spent);
+
     void set_server(const std::string& name);
     void change_privilege(Privilege* p);
     void add_playtime(int minutes);
     void update_status(const std::string& s);
     void add_spent(double amount);
-    void print_info() const;
+
+    void set_join_date(const Core::DateTime& dt);
+    void set_privilege(Privilege* p);
+
+    Server* get_server() const;
+    int get_minutes_played() const;
+    double get_money_spent() const;
+    std::string get_status() const;
+    Privilege* get_privilege() const;
+    Core::DateTime get_join_date() const;
+
+
+    std::string to_csv_line() const override;
+    static Player* from_csv_line(const std::string& line);
+    static TVector<Player> load_all();
 };

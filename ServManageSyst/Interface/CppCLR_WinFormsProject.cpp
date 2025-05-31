@@ -9,6 +9,8 @@ using namespace System;
 // }
 
 #include "Form1.h"
+#include "ModeratorMenu.h"
+#include "PlayerMenu.h"
 
 using namespace System::Windows::Forms;
 

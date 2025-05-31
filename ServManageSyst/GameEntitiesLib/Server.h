@@ -1,8 +1,9 @@
 // Copyright 2025 Alewa8131
 #pragma once
 #include <string>
-#include "../GameEntitiesLib/Event.h"
 #include "../TVector/my_vector.h"
+class Player;
+class Event;
 
 class Server {
  private:
@@ -15,6 +16,7 @@ class Server {
 
  public:
     void set_name(const std::string& name);
+    std::string get_name();
     void add_player(Player* player);
     void remove_player(int playerId);
     void create_event(Event* event);

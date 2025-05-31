@@ -8,7 +8,7 @@ class Event {
  private:
     int _id;
     std::string _name;
-    DateTime _startDate;
+    Core::DateTime _startDate;
     double _duration;
     std::string _status;
     TVector<Player*> _participants;

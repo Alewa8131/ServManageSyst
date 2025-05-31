@@ -48,6 +48,6 @@ class User {
         const std::string& username);
 
     // CSV convet
+    virtual std::string to_csv_line() const;
     static User from_csv_line(const std::string& line);
-    std::string to_csv_line() const;
 };
