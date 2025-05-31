@@ -46,7 +46,7 @@ bool Privilege::is_active(int valid_days, const Core::DateTime& now) const {
 
     return (current_days - purchase_days) < valid_days;
 }
-Core::DateTime Privilege::get_expiry_date(int valid_days) {
+Core::DateTime Privilege::get_expiry_date(int valid_days) const {
     Core::DateTime copy = _purchase_date;
     copy.add_days(valid_days);
     return copy;

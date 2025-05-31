@@ -3,6 +3,8 @@
 #include <string>
 #include "../CoreLib/DateTime.h"
 
+constexpr const char* PRIVILEGE_DB_PATH = "../GameEntitiesLib/db/privileges.csv";
+
 class Privilege {
  private:
     std::string _name;
@@ -24,7 +26,7 @@ class Privilege {
     int get_duration_days() const;
 
     bool is_active(int valid_days, const Core::DateTime& now) const;
-    Core::DateTime get_expiry_date(int valid_days);
+    Core::DateTime get_expiry_date(int valid_days) const;
 
     std::string to_csv_line() const;
     static Privilege from_csv_line(const std::string& line);

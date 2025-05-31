@@ -35,21 +35,22 @@ public:
         double money_spent);
 
     void set_server(const std::string& name);
+    void set_join_date(const Core::DateTime& dt);
+    void set_privilege(Privilege* p);
     void change_privilege(Privilege* p);
     void add_playtime(int minutes);
     void update_status(const std::string& s);
     void add_spent(double amount);
-
-    void set_join_date(const Core::DateTime& dt);
-    void set_privilege(Privilege* p);
+    std::string save_privilege_history() const;
 
     Server* get_server() const;
-    int get_minutes_played() const;
-    double get_money_spent() const;
-    std::string get_status() const;
-    Privilege* get_privilege() const;
     Core::DateTime get_join_date() const;
-
+    Privilege* get_privilege() const;
+    int get_minutes_played() const;
+    std::string get_status() const;
+    double get_money_spent() const;
+    TVector<Privilege*> get_privilege_history() const;
+    void parse_privilege_history(const std::string& field);
 
     std::string to_csv_line() const override;
     static Player* from_csv_line(const std::string& line);
