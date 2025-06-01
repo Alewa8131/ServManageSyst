@@ -65,6 +65,8 @@ class TVector {
      template <class T>
      friend void shuffle(TVector<T>& vec);
      template <class T>
+     friend void hoar_sort(TVector<T>& vec);
+     template <class T>
      friend int find_first(TVector<T>& vec, const T& value);
      template <class T>
      friend int find_last(TVector<T>& vec, const T& value);
