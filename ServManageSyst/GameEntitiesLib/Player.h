@@ -11,7 +11,7 @@
 constexpr const char* PLAYER_DB_PATH = "../GameEntitiesLib/db/players.csv";
 
 class Player : public User {
-private:
+ private:
     Server* _server;
     Core::DateTime _join_date;
     Privilege* _privilege;
@@ -22,7 +22,7 @@ private:
 
     void update_in_file();
 
-public:
+ public:
     Player();
     Player(int id,
         const std::string& username,

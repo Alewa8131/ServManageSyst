@@ -106,6 +106,10 @@ Core::DateTime Core::DateTime::from_string(const std::string& str) {
             h = (str[11] - '0') * 10 + (str[12] - '0');
             min = (str[14] - '0') * 10 + (str[15] - '0');
             s = (str[17] - '0') * 10 + (str[18] - '0');
+        } else {
+            h = 0;
+            min = 0;
+            s = 0;
         }
     } else if (str.find(':') != std::string::npos) {
         // hh:mm:ss

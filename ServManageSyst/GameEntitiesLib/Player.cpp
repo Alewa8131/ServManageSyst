@@ -26,7 +26,7 @@ Player::Player(int id,
     this->_id = id;
     this->_username = username;
     this->_password = password;
-    _server = nullptr;
+    _server = new Server(server_name);
     _join_date = Core::DateTime(join_date);
     _privilege = new Privilege();  // NAME
     _minutes_played = minutes_played;

@@ -139,6 +139,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerMenu.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ServerMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CppCLR_WinFormsProject.cpp" />

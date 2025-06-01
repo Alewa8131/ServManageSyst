@@ -2,6 +2,8 @@
 // Player can buy privilege, find other players
 #pragma once
 
+#include "ServerMenu.h"
+
 #include "../GameEntitiesLib/Player.h"
 
 namespace ServManageSyst {
@@ -13,6 +15,7 @@ namespace ServManageSyst {
 
     public ref class PlayerMenu : public Form {
     private:
+        Player* _player;
         String^ _login;
         TableLayoutPanel^ infoLayout;
         Panel^ privilegePanel;
@@ -21,6 +24,7 @@ namespace ServManageSyst {
     public:
         PlayerMenu(String^ login) {
             _login = login;
+            FindAndStorePlayer();
             InitializeComponent();
             LoadPlayerInfo();
         }
@@ -28,7 +32,12 @@ namespace ServManageSyst {
     protected:
         ~PlayerMenu() {
             if (components) delete components;
+            if (_player != nullptr) {
+                delete _player;
+                _player = nullptr;
+            }
         }
+
 
     private:
         Label^ labelInfo;
@@ -65,6 +74,16 @@ namespace ServManageSyst {
             this->privilegePanel->Controls->Add(this->privilegeList);
             this->Controls->Add(this->privilegePanel);
 
+            Button^ viewServersButton = gcnew Button();
+            viewServersButton->Text = "View Servers";
+            viewServersButton->Font = gcnew System::Drawing::Font("Segoe UI", 10);
+            viewServersButton->BackColor = Color::FromArgb(200, 220, 255);
+            viewServersButton->ForeColor = Color::FromArgb(30, 30, 30);
+            viewServersButton->Location = Point(20, 440);
+            viewServersButton->Size = System::Drawing::Size(150, 35);
+            viewServersButton->Click += gcnew EventHandler(this, &PlayerMenu::OnViewServersClick);
+            this->Controls->Add(viewServersButton);
+
             this->infoLayout->ColumnStyles->Add(gcnew ColumnStyle(SizeType::AutoSize));
             this->infoLayout->ColumnStyles->Add(gcnew ColumnStyle(SizeType::Percent, 100));
 
@@ -80,6 +99,34 @@ namespace ServManageSyst {
             this->ResumeLayout(false);
         }
 
+        void FindAndStorePlayer() {
+            String^ name1 = _login;
+            std::string login = marshal_as<std::string>(name1);
+            TVector<Player> players = Player::load_all();
+
+            for (int i = 0; i < players.size(); ++i) {
+                if (players[i].get_username() == login) {
+                    _player = new Player(players[i]);
+                    return;
+                }
+            }
+
+            MessageBox::Show("Player not found.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+        }
+
+        void OnViewServersClick(Object^ sender, EventArgs^ e) {
+            Server* server = _player->get_server();
+            if (server == nullptr) {
+                MessageBox::Show("Server is nullptr");
+                return;
+            }
+
+            std::string serverName = server->get_name();
+            System::String^ managedServerName = gcnew System::String(serverName.c_str());
+
+            ServerMenu^ serverMenu = gcnew ServerMenu(managedServerName);
+            serverMenu->ShowDialog();
+        }
 
         void AddInfoRow(String^ labelText, String^ valueText) {
             Label^ label = gcnew Label();
@@ -114,56 +161,47 @@ namespace ServManageSyst {
 
 
         void LoadPlayerInfo() {
-            String^ name1 = _login;
-            std::string login = marshal_as<std::string>(name1);
-            TVector<Player> players = Player::load_all();
+            Player& p = *_player;
+            AddInfoRow("Login:", gcnew String(p.get_username().c_str()));
+            AddInfoRow("Status:", gcnew String(p.get_status().c_str()));
+            AddInfoRow("Join Date:", gcnew String(p.get_join_date().to_string().c_str()));
+            AddInfoRow("Minutes Played:", p.get_minutes_played().ToString());
 
-            for (int i = 0; i < players.size(); ++i) {
-                Player p = players[i];
-                if (p.get_username() == login) {
-                    AddInfoRow("Login:", gcnew String(p.get_username().c_str()));
-                    AddInfoRow("Status:", gcnew String(p.get_status().c_str()));
-                    AddInfoRow("Join Date:", gcnew String(p.get_join_date().to_string().c_str()));
-                    AddInfoRow("Minutes Played:", p.get_minutes_played().ToString());
+            std::string moneyStr = std::to_string(p.get_money_spent());
+            size_t dot = moneyStr.find('.');
+            if (dot != std::string::npos && dot + 3 <= moneyStr.size())
+                moneyStr = moneyStr.substr(0, dot + 3);
+            AddInfoRow("Money Spent:", gcnew String(moneyStr.c_str()));
 
-                    std::string moneyStr = std::to_string(p.get_money_spent());
-                    size_t dot = moneyStr.find('.');
-                    if (dot != std::string::npos && dot + 3 <= moneyStr.size())
-                        moneyStr = moneyStr.substr(0, dot + 3);
-                    AddInfoRow("Money Spent:", gcnew String(moneyStr.c_str()));
+            if (p.get_privilege())
+                AddInfoRow("Privilege:", gcnew String(p.get_privilege()->get_name().c_str()));
+            else
+                AddInfoRow("Privilege:", "None");
 
-                    if (p.get_privilege())
-                        AddInfoRow("Privilege:", gcnew String(p.get_privilege()->get_name().c_str()));
-                    else
-                        AddInfoRow("Privilege:", "None");
+            if (p.get_server())
+                AddInfoRow("Server:", gcnew String(p.get_server()->get_name().c_str()));
+            else
+                AddInfoRow("Server:", "None");
 
-                    if (p.get_server())
-                        AddInfoRow("Server:", gcnew String(p.get_server()->get_name().c_str()));
-                    else
-                        AddInfoRow("Server:", "None");
+            Label^ historyTitle = gcnew Label();
+            historyTitle->Text = "Privilege History:";
+            historyTitle->Font = gcnew System::Drawing::Font("Segoe UI Semibold", 10, FontStyle::Bold);
+            historyTitle->AutoSize = true;
+            this->privilegeList->Controls->Add(historyTitle);
 
-                    Label^ historyTitle = gcnew Label();
-                    historyTitle->Text = "Privilege History:";
-                    historyTitle->Font = gcnew System::Drawing::Font("Segoe UI Semibold", 10, FontStyle::Bold);
-                    historyTitle->AutoSize = true;
-                    this->privilegeList->Controls->Add(historyTitle);
-
-                    TVector<Privilege*> history = p.get_privilege_history();
-                    if (history.is_empty()) {
-                        Label^ noHistory = gcnew Label();
-                        noHistory->Text = "No privilege history";
-                        noHistory->BackColor = Color::FromArgb(230, 240, 255);
-                        noHistory->AutoSize = true;
-                        this->privilegeList->Controls->Add(noHistory);
-                    }
-                    else {
-                        for (int i = 0; i < history.size(); ++i) {
-                            Privilege* pr = history[i];
-                            AddPrivilegeHistoryRow(pr->get_name(), pr->get_price(), pr->get_purchase_date());
-                        }
-                    }
+            TVector<Privilege*> history = p.get_privilege_history();
+            if (history.is_empty()) {
+                Label^ noHistory = gcnew Label();
+                noHistory->Text = "No privilege history";
+                noHistory->BackColor = Color::FromArgb(230, 240, 255);
+                noHistory->AutoSize = true;
+                this->privilegeList->Controls->Add(noHistory);
+            } else {
+                for (int i = 0; i < history.size(); ++i) {
+                    Privilege* pr = history[i];
+                    AddPrivilegeHistoryRow(pr->get_name(), pr->get_price(), pr->get_purchase_date());
                 }
             }
         }
-    };
+  };
 }
