@@ -38,6 +38,8 @@ namespace ServManageSyst {
 
 #pragma region Windows Form Designer generated code
            void InitializeComponent(void) {
+               this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+               this->MaximizeBox = false;
                this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
                this->Location = System::Drawing::Point(550, 300);
 

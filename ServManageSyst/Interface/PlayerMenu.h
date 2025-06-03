@@ -17,9 +17,12 @@ namespace ServManageSyst {
     private:
         Player* _player;
         String^ _login;
+        Panel^ mainPanel;
         TableLayoutPanel^ infoLayout;
         Panel^ privilegePanel;
         FlowLayoutPanel^ privilegeList;
+        Panel^ buttonsPanel;
+        Button^ viewServersButton;
 
     public:
         PlayerMenu(String^ login) {
@@ -43,60 +46,105 @@ namespace ServManageSyst {
         Label^ labelInfo;
         System::ComponentModel::Container^ components;
 
-        void InitializeComponent(void) {
-            this->infoLayout = gcnew TableLayoutPanel();
+        void InitializeComponent(void)
+        {
             this->SuspendLayout();
 
-            // Table layout for player info
-            this->infoLayout->ColumnCount = 2;
-            this->infoLayout->RowCount = 0;
+            // Main container panel
+            this->mainPanel = gcnew Panel();
+            this->mainPanel->Dock = DockStyle::Fill;
+            this->mainPanel->Padding = System::Windows::Forms::Padding(20);
+            this->mainPanel->BackColor = Color::FromArgb(240, 245, 250);
+
+            // Player info table layout (similar to serverInfoLayout)
+            this->infoLayout = gcnew TableLayoutPanel();
+            this->infoLayout->Dock = DockStyle::Top;
             this->infoLayout->AutoSize = true;
-            this->infoLayout->Location = Point(20, 0);
-            this->infoLayout->Padding = System::Windows::Forms::Padding(10);
-            this->infoLayout->BackColor = Color::FromArgb(255, 255, 255); // white
-
-            // Scroll panel
-            this->privilegePanel = gcnew Panel();
-            this->privilegePanel->AutoScroll = true;
-            this->privilegePanel->Location = Point(20, 220);
-            this->privilegePanel->Size = System::Drawing::Size(500, 200);
-            this->privilegePanel->BorderStyle = BorderStyle::FixedSingle;
-            this->privilegePanel->BackColor = Color::FromArgb(240, 248, 255); // light blueish
-
-            // Container for privileges
-            this->privilegeList = gcnew FlowLayoutPanel();
-            this->privilegeList->AutoSize = true;
-            this->privilegeList->FlowDirection = FlowDirection::TopDown;
-            this->privilegeList->WrapContents = false;
-            this->privilegeList->Padding = System::Windows::Forms::Padding(10);
-            this->privilegeList->BackColor = Color::FromArgb(250, 250, 250); // slightly off-white
-
-            this->privilegePanel->Controls->Add(this->privilegeList);
-            this->Controls->Add(this->privilegePanel);
-
-            Button^ viewServersButton = gcnew Button();
-            viewServersButton->Text = "View Servers";
-            viewServersButton->Font = gcnew System::Drawing::Font("Segoe UI", 10);
-            viewServersButton->BackColor = Color::FromArgb(200, 220, 255);
-            viewServersButton->ForeColor = Color::FromArgb(30, 30, 30);
-            viewServersButton->Location = Point(20, 440);
-            viewServersButton->Size = System::Drawing::Size(150, 35);
-            viewServersButton->Click += gcnew EventHandler(this, &PlayerMenu::OnViewServersClick);
-            this->Controls->Add(viewServersButton);
-
+            this->infoLayout->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
+            this->infoLayout->ColumnCount = 2;
             this->infoLayout->ColumnStyles->Add(gcnew ColumnStyle(SizeType::AutoSize));
             this->infoLayout->ColumnStyles->Add(gcnew ColumnStyle(SizeType::Percent, 100));
+            this->infoLayout->Margin = System::Windows::Forms::Padding(0, 0, 0, 20);
+            this->infoLayout->Padding = System::Windows::Forms::Padding(15);
+            this->infoLayout->BackColor = Color::White;
+            this->infoLayout->BorderStyle = BorderStyle::FixedSingle;
 
-            this->Controls->Add(this->infoLayout);
-            this->AutoSize = true;
-            this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
-            this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
-            this->StartPosition = FormStartPosition::CenterScreen;
+            // Privileges scroll panel (similar to eventPanel)
+            this->privilegePanel = gcnew Panel();
+            this->privilegePanel->Dock = DockStyle::Fill;
+            this->privilegePanel->AutoScroll = true;
+            this->privilegePanel->BorderStyle = BorderStyle::FixedSingle;
+            this->privilegePanel->BackColor = Color::FromArgb(245, 250, 255);
+
+            // Privileges list container (similar to eventList)
+            this->privilegeList = gcnew FlowLayoutPanel();
+            this->privilegeList->FlowDirection = FlowDirection::TopDown;
+            this->privilegeList->WrapContents = false;
+            this->privilegeList->AutoSize = true;
+            this->privilegeList->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
+            this->privilegeList->Padding = System::Windows::Forms::Padding(15);
+            this->privilegeList->BackColor = Color::FromArgb(250, 253, 255);
+            this->privilegeList->Dock = DockStyle::Top;
+
+            this->privilegePanel->Controls->Add(this->privilegeList);
+
+            // Buttons panel (similar to ServerMenu)
+            this->buttonsPanel = gcnew Panel();
+            this->buttonsPanel->Dock = DockStyle::Bottom;
+            this->buttonsPanel->Height = 60;
+            this->buttonsPanel->Padding = System::Windows::Forms::Padding(20, 10, 20, 10);
+            this->buttonsPanel->BackColor = Color::Transparent;
+
+            // Button container (similar to ServerMenu structure)
+            Panel^ buttonContainer = gcnew Panel();
+            buttonContainer->Dock = DockStyle::Fill;
+            buttonContainer->BackColor = Color::Transparent;
+
+            // View Servers button
+            this->viewServersButton = gcnew Button();
+            this->viewServersButton->Text = "View Servers";
+            this->viewServersButton->Font = gcnew System::Drawing::Font("Segoe UI", 10, FontStyle::Regular);
+            this->viewServersButton->BackColor = Color::FromArgb(70, 130, 180);
+            this->viewServersButton->ForeColor = Color::White;
+            this->viewServersButton->FlatStyle = FlatStyle::Flat;
+            this->viewServersButton->FlatAppearance->BorderSize = 0;
+            this->viewServersButton->Size = System::Drawing::Size(160, 40);
+            this->viewServersButton->Cursor = Cursors::Hand;
+            this->viewServersButton->Anchor = AnchorStyles::None;
+            this->viewServersButton->Click += gcnew EventHandler(this, &PlayerMenu::OnViewServersClick);
+
+            // Center the button
+            this->viewServersButton->Location = Point(
+                (buttonContainer->Width - this->viewServersButton->Width) / 2,
+                (buttonContainer->Height - this->viewServersButton->Height) / 2);
+
+            buttonContainer->Controls->Add(this->viewServersButton);
+            this->buttonsPanel->Controls->Add(buttonContainer);
+
+            // Content panel to hold info and privilege panels (similar to ServerMenu)
+            Panel^ contentPanel = gcnew Panel();
+            contentPanel->Dock = DockStyle::Fill;
+            contentPanel->Controls->Add(this->privilegePanel);
+            contentPanel->Controls->Add(this->infoLayout);
+
+            // Add controls to main panel (same order as ServerMenu)
+            this->mainPanel->Controls->Add(contentPanel);
+            this->mainPanel->Controls->Add(this->buttonsPanel);
+
+            // Form settings (similar to ServerMenu)
+            this->Controls->Add(this->mainPanel);
+            this->MinimumSize = System::Drawing::Size(650, 550);
             this->Text = L"Player Menu";
-            this->Font = gcnew System::Drawing::Font("Segoe UI", 10);
-            this->BackColor = Color::FromArgb(220, 235, 250); // form background
+            this->Font = gcnew System::Drawing::Font("Segoe UI", 9);
+            this->StartPosition = FormStartPosition::CenterScreen;
+            this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::Sizable;
+            this->BackColor = Color::FromArgb(240, 245, 250);
 
             this->ResumeLayout(false);
+            this->PerformLayout();
+        }
+        void OnFormResize(Object^ sender, EventArgs^ e) {
+            this->viewServersButton->Left = (this->ClientSize.Width - this->viewServersButton->Width) / 2;
         }
 
         void FindAndStorePlayer() {
@@ -138,6 +186,7 @@ namespace ServManageSyst {
             Label^ value = gcnew Label();
             value->Text = valueText;
             value->AutoSize = true;
+            value->Font = gcnew System::Drawing::Font("Segoe UI", 10);
             value->ForeColor = Color::FromArgb(50, 50, 50); // dark gray
 
             this->infoLayout->Controls->Add(label);
@@ -151,6 +200,7 @@ namespace ServManageSyst {
             Label^ lbl = gcnew Label();
             lbl->Text = label;
             lbl->AutoSize = true;
+            lbl->Font = gcnew System::Drawing::Font("Segoe UI", 10);
             lbl->BackColor = Color::FromArgb(230, 240, 255); // light blue block
             lbl->Padding = System::Windows::Forms::Padding(5);
             lbl->Margin = Windows::Forms::Padding(5);
