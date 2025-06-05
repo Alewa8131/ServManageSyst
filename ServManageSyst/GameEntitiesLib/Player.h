@@ -24,6 +24,8 @@ class Player : public User {
 
  public:
     Player();
+    Player(const std::string& username,
+        const std::string& password);
     Player(int id,
         const std::string& username,
         const std::string& password,
@@ -53,6 +55,6 @@ class Player : public User {
     void parse_privilege_history(const std::string& field);
 
     std::string to_csv_line() const override;
-    static Player* from_csv_line(const std::string& line);
-    static TVector<Player> load_all();
+    static Player from_csv_line(const std::string& line);
+    static TVector<Player> load_all_players();
 };

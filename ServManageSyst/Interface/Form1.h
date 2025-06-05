@@ -3,6 +3,7 @@
 
 #include "ModeratorMenu.h"
 #include "PlayerMenu.h"
+#include "RegistrationForm.h"
 
 namespace ServManageSyst {
 
@@ -32,8 +33,9 @@ namespace ServManageSyst {
     private: System::Windows::Forms::TextBox^ textBoxLogin;
     private: System::Windows::Forms::TextBox^ textBoxPassword;
     private: System::Windows::Forms::Button^ buttonLogin;
-    private: System::Windows::Forms::Label^ label1;
-    private: System::Windows::Forms::Label^ label2;
+    private: System::Windows::Forms::Button^ buttonRegister;
+    private: System::Windows::Forms::Label^ labelLogin;
+    private: System::Windows::Forms::Label^ labelPassword;
     private: System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
@@ -46,8 +48,8 @@ namespace ServManageSyst {
                this->textBoxLogin = (gcnew System::Windows::Forms::TextBox());
                this->textBoxPassword = (gcnew System::Windows::Forms::TextBox());
                this->buttonLogin = (gcnew System::Windows::Forms::Button());
-               this->label1 = (gcnew System::Windows::Forms::Label());
-               this->label2 = (gcnew System::Windows::Forms::Label());
+               this->labelLogin = (gcnew System::Windows::Forms::Label());
+               this->labelPassword = (gcnew System::Windows::Forms::Label());
                this->SuspendLayout();
 
                this->textBoxLogin->Location = System::Drawing::Point(120, 50);
@@ -63,20 +65,27 @@ namespace ServManageSyst {
                this->buttonLogin->Click += gcnew System::EventHandler(this,
                    &Form1::buttonLogin_Click);
 
-               this->label1->Location = System::Drawing::Point(50, 50);
-               this->label1->Size = System::Drawing::Size(60, 20);
-               this->label1->Text = L"Login:";
+               this->buttonRegister = (gcnew System::Windows::Forms::Button());
+               this->buttonRegister->Location = System::Drawing::Point(150, 190);
+               this->buttonRegister->Size = System::Drawing::Size(100, 30);
+               this->buttonRegister->Text = L"Create Account";
+               this->buttonRegister->Click += gcnew System::EventHandler(this, &Form1::buttonRegister_Click);
+               this->Controls->Add(this->buttonRegister);
 
-               this->label2->Location = System::Drawing::Point(50, 100);
-               this->label2->Size = System::Drawing::Size(60, 20);
-               this->label2->Text = L"Password:";
+               this->labelLogin->Location = System::Drawing::Point(50, 50);
+               this->labelLogin->Size = System::Drawing::Size(60, 20);
+               this->labelLogin->Text = L"Login:";
+
+               this->labelPassword->Location = System::Drawing::Point(50, 100);
+               this->labelPassword->Size = System::Drawing::Size(60, 20);
+               this->labelPassword->Text = L"Password:";
 
                this->ClientSize = System::Drawing::Size(400, 220);
                this->Controls->Add(this->textBoxLogin);
                this->Controls->Add(this->textBoxPassword);
                this->Controls->Add(this->buttonLogin);
-               this->Controls->Add(this->label1);
-               this->Controls->Add(this->label2);
+               this->Controls->Add(this->labelLogin);
+               this->Controls->Add(this->labelPassword);
                this->Name = L"Form1";
                this->Text = L"Login";
                this->ResumeLayout(false);
@@ -112,6 +121,12 @@ namespace ServManageSyst {
             }
         }
         MessageBox::Show("Invalid login or password.");
+    }
+    private: System::Void buttonRegister_Click(System::Object^ sender, System::EventArgs^ e) {
+        this->Hide();
+        RegistrationForm^ regForm = gcnew RegistrationForm();
+        regForm->ShowDialog();
+        this->Show();
     }
     };
 }  // namespace ServManageSyst

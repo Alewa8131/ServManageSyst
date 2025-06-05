@@ -12,6 +12,19 @@ Player::Player() : User() {
     _money_spent = 0.0;
     _privilege_history = TVector<Privilege*>();
 }
+Player::Player(const std::string& username,
+    const std::string& password) {
+    this->_id = get_next_id(USER_DB_PATH);
+    this->_username = username;
+    this->_password = password;
+    _server = new Server("DefaultServer");
+    _join_date = Core::DateTime();
+    _privilege = new Privilege();
+    _minutes_played = 0;
+    _status = "active";
+    _money_spent = 0;
+    _privilege_history = TVector<Privilege*>();
+}
 
 Player::Player(int id,
     const std::string& username,
@@ -119,14 +132,7 @@ void Player::update_in_file() {
 
         if (id == _id) {
             std::string privName = (_privilege ? _privilege->get_name() : "None");
-            line = std::to_string(_id) + "," +
-                _username + "," + _password + "," +
-                (_server ? _server->get_name() : "Unknown") + "," +
-                _join_date.to_string() + "," +
-                privName + "," +
-                std::to_string(_minutes_played) + "," +
-                _status + "," +
-                std::to_string(_money_spent);
+            line = to_csv_line();
         }
 
         lines.push_back(line);
@@ -150,59 +156,64 @@ std::string Player::to_csv_line() const {
         privilege_name + "," +
         std::to_string(_minutes_played) + "," +
         _status + "," +
-        std::to_string(_money_spent) + "," 
+        std::to_string(_money_spent) + ","
         + save_privilege_history();
 }
-Player* Player::from_csv_line(const std::string& line) {
+Player Player::from_csv_line(const std::string& line) {
     std::stringstream ss(line);
     std::string field;
 
-    Player* p = new Player();
+    Player p = Player();
 
     // id
     std::getline(ss, field, ',');
-    p->set_id(std::stoi(field));
+    p.set_id(std::stoi(field));
 
     // username
     std::getline(ss, field, ',');
-    p->set_username(field);
+    p.set_username(field);
 
     // password
     std::getline(ss, field, ',');
-    p->set_password(field);
+    p.set_password(field);
 
     // server_name
     std::getline(ss, field, ',');
-    p->set_server(field);
+    p.set_server(field);
 
     // join_date
     std::getline(ss, field, ',');
     Core::DateTime dt = Core::DateTime::from_string(field);
-    p->set_join_date(dt);
+    p.set_join_date(dt);
 
     // privilege_name
     std::getline(ss, field, ',');
-    if (field != "None") {
-        Privilege* pr = new Privilege();
-        pr->set_name(field);
-        p->change_privilege(pr);
-    }
+    Privilege* pr = new Privilege();
+    pr->set_name(field);
+    if (p.get_privilege_history().size() == 0)
+        p.change_privilege(pr);
+    else
+        p.set_privilege(pr);
 
     // minutes_played
     std::getline(ss, field, ',');
-    p->add_playtime(std::stoi(field));
+    p.add_playtime(std::stoi(field));
 
     // status
     std::getline(ss, field, ',');
-    p->update_status(field);
+    p.update_status(field);
 
     // money_spent
     std::getline(ss, field, ',');
-    p->add_spent(std::stod(field));
+    p.add_spent(std::stod(field));
+
+    if (std::getline(ss, field)) {
+        p.parse_privilege_history(field);
+    }
 
     return p;
 }
-TVector<Player> Player::load_all() {
+TVector<Player> Player::load_all_players() {
     TVector<Player> result;
     std::ifstream file(PLAYER_DB_PATH);
     if (!file.is_open()) return result;
@@ -254,7 +265,6 @@ TVector<Player> Player::load_all() {
             result.push_back(player);
         }
         catch (const std::exception& e) {
-            // Обработка ошибок парсинга (пропуск строки)
             continue;
         }
     }

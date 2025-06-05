@@ -40,7 +40,7 @@ class User {
     static TVector<User> load_all_users(const std::string& filename);
     static bool save_all_users(const TVector<User>& users,
         const std::string& filename);
-    static int get_next_id(const TVector<User>& users);
+    static int get_next_id(const std::string& path);
     static bool add_user(const User& new_user, const std::string& filename);
     bool update_user_in_file(const std::string& filename) const;
     static int find_index_by_id(const TVector<User>& users, int id);

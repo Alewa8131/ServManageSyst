@@ -9,18 +9,17 @@ User::User(int id, const std::string& username,
 User::User(const std::string& username,
     const std::string& password, UserRole role) {
     TVector<User> users = load_all_users(USER_DB_PATH);
-    if (find_index_by_username(users, username)) {
+    if (find_index_by_username(users, username) != -1) {
         throw std::runtime_error("Username already taken");
     }
 
-    _id = get_next_id(users);
+    _id = get_next_id(USER_DB_PATH);
     _username = username;
     _password = password;
     _role = role;
 }
 User User::create_user() {
-    TVector<User> users = load_all_users(USER_DB_PATH);
-    _id = get_next_id(users);
+    _id = get_next_id(USER_DB_PATH);
     _username = "user" + std::to_string(_id);
     _password = "default";
     _role = UserRole::Player;
@@ -98,11 +97,26 @@ bool User::save_all_users(const TVector<User>& users,
     return true;
 }
 
-int User::get_next_id(const TVector<User>& users) {
+int User::get_next_id(const std::string& path) {
+    std::ifstream file(path);
+    if (!file.is_open()) return 1;
+
     int max_id = 0;
-    for (int i = users.size(); i-- > 0;) {
-        if (users[i].get_id() > max_id) max_id = users[i].get_id();
+    std::string line;
+    while (std::getline(file, line)) {
+        if (line.empty()) continue;
+        std::stringstream ss(line);
+        std::string id_str;
+        if (!std::getline(ss, id_str, ',')) continue;
+        try {
+            int id = std::stoi(id_str);
+            if (id > max_id) max_id = id;
+        }
+        catch (...) {
+            continue;
+        }
     }
+
     return max_id + 1;
 }
 bool User::add_user(const User& new_user, const std::string& filename) {

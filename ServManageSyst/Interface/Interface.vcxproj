@@ -138,6 +138,7 @@
     <ClInclude Include="ModeratorMenu.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerMenu.h" />
+    <ClInclude Include="RegistrationForm.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ServerMenu.h" />
   </ItemGroup>
