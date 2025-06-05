@@ -40,8 +40,18 @@ class User {
 
     // DataBase
     static TVector<User> load_all_users(const std::string& filename);
-    static bool save_all_users(const TVector<User>& users,
-        const std::string& filename);
+    template <class T>
+    static bool save_all_objects(const TVector<T>& objects, const std::string& filename) {
+        std::ofstream file(filename, std::ios::trunc);
+        if (!file.is_open()) return false;
+
+        for (int i = 0; i < objects.size(); ++i) {
+            file << objects[i].to_csv_line() << "\n";
+        }
+
+        file.close();
+        return true;
+    }
     bool update_user_in_file(const std::string& filename) const;
 
     static int get_next_id(const std::string& path);

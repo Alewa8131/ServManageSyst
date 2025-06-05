@@ -82,24 +82,14 @@ TVector<User> User::load_all_users(const std::string& filename) {
     file.close();
     return users;
 }
-bool User::save_all_users(const TVector<User>& users,
-    const std::string& filename) {
 
-    std::ofstream file(filename, std::ios::trunc);
-    if (!file.is_open()) return false;
-    for (int i = 0; i < users.size(); ++i) {
-        file << users[i].to_csv_line() << "\n";
-    }
-    file.close();
-    return true;
-}
 bool User::update_user_in_file(const std::string& filename) const {
     TVector<User> users = load_all_users(filename);
 
     int index = find_index_by_id(users, this->_id);
     if (index != -1) {
         users[index] = *this;
-        return save_all_users(users, filename);
+        return save_all_objects(users, filename);
     }
 
     return false;
@@ -131,7 +121,7 @@ bool User::add_user(const User& new_user, const std::string& filename) {
     TVector<User> users = load_all_users(filename);
 
     users.push_back(new_user);
-    return save_all_users(users, filename);
+    return save_all_objects(users, filename);
 }
 
 int User::find_index_by_id(const TVector<User>& users, int id) {
