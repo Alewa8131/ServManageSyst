@@ -6,8 +6,14 @@ User::User() : _id(0), _username(""), _password(""), _role(UserRole::Player) {}
 User::User(int id, const std::string& username,
     const std::string& password, UserRole role)
     : _id(id), _username(username), _password(password), _role(role) {}
+
 User::User(const std::string& username,
     const std::string& password, UserRole role) {
+
+    if (!is_valid_input(username) || !is_valid_input(password)) {
+        throw std::runtime_error("Username or password contains forbidden characters");
+    }
+
     TVector<User> users = load_all_users(USER_DB_PATH);
     if (find_index_by_username(users, username) != -1) {
         throw std::runtime_error("Username already taken");
@@ -51,24 +57,15 @@ UserRole User::get_role() const {
     return _role;
 }
 
-User User::from_csv_line(const std::string& line) {
-    std::stringstream ss(line);
-    std::string id_str, username, password, role_str;
+bool User::is_valid_input(const std::string& input) {
+    const std::string forbidden_chars = " ;:'\",./\\`~%^()[]{}";
 
-    std::getline(ss, id_str, ',');
-    std::getline(ss, username, ',');
-    std::getline(ss, password, ',');
-    std::getline(ss, role_str, ',');
-
-    int id = std::stoi(id_str);
-    UserRole role = (role_str == "Moderator")
-        ? UserRole::Moderator : UserRole::Player;
-
-    return User(id, username, password, role);
-}
-std::string User::to_csv_line() const {
-    return std::to_string(_id) + "," + _username + "," + _password + "," +
-        (_role == UserRole::Moderator ? "Moderator" : "Player");
+    for (char c : input) {
+        if (forbidden_chars.find(c) != std::string::npos) {
+            return false;
+        }
+    }
+    return true;
 }
 
 TVector<User> User::load_all_users(const std::string& filename) {
@@ -95,6 +92,17 @@ bool User::save_all_users(const TVector<User>& users,
     }
     file.close();
     return true;
+}
+bool User::update_user_in_file(const std::string& filename) const {
+    TVector<User> users = load_all_users(filename);
+
+    int index = find_index_by_id(users, this->_id);
+    if (index != -1) {
+        users[index] = *this;
+        return save_all_users(users, filename);
+    }
+
+    return false;
 }
 
 int User::get_next_id(const std::string& path) {
@@ -125,17 +133,6 @@ bool User::add_user(const User& new_user, const std::string& filename) {
     users.push_back(new_user);
     return save_all_users(users, filename);
 }
-bool User::update_user_in_file(const std::string& filename) const {
-    TVector<User> users = load_all_users(filename);
-
-    int index = find_index_by_id(users, this->_id);
-    if (index != -1) {
-        users[index] = *this;
-        return save_all_users(users, filename);
-    }
-
-    return false;
-}
 
 int User::find_index_by_id(const TVector<User>& users, int id) {
     for (int i = 0; i < users.size(); ++i) {
@@ -154,4 +151,24 @@ int User::find_index_by_username(const TVector<User>& users,
         }
     }
     return -1;
+}
+
+User User::from_csv_line(const std::string& line) {
+    std::stringstream ss(line);
+    std::string id_str, username, password, role_str;
+
+    std::getline(ss, id_str, ',');
+    std::getline(ss, username, ',');
+    std::getline(ss, password, ',');
+    std::getline(ss, role_str, ',');
+
+    int id = std::stoi(id_str);
+    UserRole role = (role_str == "Moderator")
+        ? UserRole::Moderator : UserRole::Player;
+
+    return User(id, username, password, role);
+}
+std::string User::to_csv_line() const {
+    return std::to_string(_id) + "," + _username + "," + _password + "," +
+        (_role == UserRole::Moderator ? "Moderator" : "Player");
 }

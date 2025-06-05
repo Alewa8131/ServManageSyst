@@ -15,6 +15,11 @@ Player::Player() : User() {
 Player::Player(const std::string& username,
     const std::string& password) {
     this->_id = get_next_id(USER_DB_PATH);
+
+    if (!is_valid_input(username) || !is_valid_input(password)) {
+        throw std::runtime_error("Username or password contains forbidden characters");
+    }
+
     this->_username = username;
     this->_password = password;
     _server = new Server("DefaultServer");
