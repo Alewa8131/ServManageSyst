@@ -1,5 +1,5 @@
 // Copyright 2025 Alewa8131
-// Player can buy privilege, find other players
+// Player can buy privilege, find other players, change password
 #pragma once
 
 #include "ServerMenu.h"
@@ -23,6 +23,7 @@ namespace ServManageSyst {
         FlowLayoutPanel^ privilegeList;
         Panel^ buttonsPanel;
         Button^ viewServersButton;
+        Button^ changePasswordButton;
 
     public:
         PlayerMenu(String^ login) {
@@ -91,7 +92,7 @@ namespace ServManageSyst {
             // Buttons panel (similar to ServerMenu)
             this->buttonsPanel = gcnew Panel();
             this->buttonsPanel->Dock = DockStyle::Bottom;
-            this->buttonsPanel->Height = 60;
+            this->buttonsPanel->Height = 80;
             this->buttonsPanel->Padding = System::Windows::Forms::Padding(20, 10, 20, 10);
             this->buttonsPanel->BackColor = Color::Transparent;
 
@@ -100,40 +101,46 @@ namespace ServManageSyst {
             buttonContainer->Dock = DockStyle::Fill;
             buttonContainer->BackColor = Color::Transparent;
 
-            // View Servers button
+            // View Servers Button
             this->viewServersButton = gcnew Button();
             this->viewServersButton->Text = "View Servers";
-            this->viewServersButton->Font = gcnew System::Drawing::Font("Segoe UI", 10, FontStyle::Regular);
+            this->viewServersButton->Font = gcnew System::Drawing::Font("Segoe UI", 10);
             this->viewServersButton->BackColor = Color::FromArgb(70, 130, 180);
             this->viewServersButton->ForeColor = Color::White;
             this->viewServersButton->FlatStyle = FlatStyle::Flat;
             this->viewServersButton->FlatAppearance->BorderSize = 0;
-            this->viewServersButton->Size = System::Drawing::Size(160, 40);
+            this->viewServersButton->Size = Drawing::Size(160, 40);
             this->viewServersButton->Cursor = Cursors::Hand;
-            this->viewServersButton->Anchor = AnchorStyles::None;
             this->viewServersButton->Click += gcnew EventHandler(this, &PlayerMenu::OnViewServersClick);
-
-            // Center the button
-            this->viewServersButton->Location = Point(
-                (buttonContainer->Width - this->viewServersButton->Width) / 2,
-                (buttonContainer->Height - this->viewServersButton->Height) / 2);
-
+            this->viewServersButton->Location = Point(80, 10);
             buttonContainer->Controls->Add(this->viewServersButton);
+
+            // Change Password Button
+            this->changePasswordButton = gcnew Button();
+            this->changePasswordButton->Text = "Change Password";
+            this->changePasswordButton->Font = gcnew System::Drawing::Font("Segoe UI", 10);
+            this->changePasswordButton->BackColor = Color::FromArgb(100, 149, 237);
+            this->changePasswordButton->ForeColor = Color::White;
+            this->changePasswordButton->FlatStyle = FlatStyle::Flat;
+            this->changePasswordButton->FlatAppearance->BorderSize = 0;
+            this->changePasswordButton->Size = Drawing::Size(160, 40);
+            this->changePasswordButton->Cursor = Cursors::Hand;
+            this->changePasswordButton->Click += gcnew EventHandler(this, &PlayerMenu::OnChangePasswordClick);
+            this->changePasswordButton->Location = Point(260, 10);
+            buttonContainer->Controls->Add(this->changePasswordButton);
+
             this->buttonsPanel->Controls->Add(buttonContainer);
 
-            // Content panel to hold info and privilege panels (similar to ServerMenu)
             Panel^ contentPanel = gcnew Panel();
             contentPanel->Dock = DockStyle::Fill;
             contentPanel->Controls->Add(this->privilegePanel);
             contentPanel->Controls->Add(this->infoLayout);
 
-            // Add controls to main panel (same order as ServerMenu)
             this->mainPanel->Controls->Add(contentPanel);
             this->mainPanel->Controls->Add(this->buttonsPanel);
 
-            // Form settings (similar to ServerMenu)
             this->Controls->Add(this->mainPanel);
-            this->MinimumSize = System::Drawing::Size(650, 550);
+            this->MinimumSize = Drawing::Size(650, 550);
             this->Text = L"Player Menu";
             this->Font = gcnew System::Drawing::Font("Segoe UI", 9);
             this->StartPosition = FormStartPosition::CenterScreen;
@@ -143,6 +150,84 @@ namespace ServManageSyst {
             this->ResumeLayout(false);
             this->PerformLayout();
         }
+        void OnChangePasswordClick(Object^ sender, EventArgs^ e) {
+            String^ newPassword = Prompt("Enter new password:", "Change Password");
+            if (String::IsNullOrWhiteSpace(newPassword)) return;
+
+            String^ name1 = _login;
+            std::string login = marshal_as<std::string>(name1);
+            std::string newPass = marshal_as<std::string>(newPassword);
+
+            try {
+                if (!User::is_valid_input(newPass)) {
+                    throw std::runtime_error("Password contains forbidden characters");
+                }
+                TVector<Player> players = Player::load_all_players();
+                for (int i = 0; i < players.size(); ++i) {
+                    if (players[i].get_username() == login) {
+                        players[i].set_password(newPass);
+                        break;
+                    }
+                }
+                Player::save_all_objects(players, PLAYER_DB_PATH);
+                TVector<User> users = User::load_all_users(USER_DB_PATH);
+                for (int i = 0; i < players.size(); ++i) {
+                    if (users[i].get_username() == login) {
+                        users[i].set_password(newPass);
+                        break;
+                    }
+                }
+                User::save_all_objects(users, USER_DB_PATH);
+
+                MessageBox::Show("Password successfully changed.");
+            }
+            catch (const std::exception& ex) {
+                MessageBox::Show(gcnew String(ex.what()), "Registration Error",
+                    MessageBoxButtons::OK, MessageBoxIcon::Error);
+            }
+        }
+        String^ Prompt(String^ text, String^ caption) {
+            Form^ prompt = gcnew Form();
+            prompt->Width = 400;
+            prompt->Height = 160;
+            prompt->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
+            prompt->Text = caption;
+            prompt->Font = gcnew System::Drawing::Font("Segoe UI", 10);
+            prompt->BackColor = Color::FromArgb(245, 250, 255);
+            prompt->ForeColor = Color::Black;
+            prompt->StartPosition = FormStartPosition::CenterScreen;
+
+            Label^ textLabel = gcnew Label();
+            textLabel->Left = 20;
+            textLabel->Top = 20;
+            textLabel->Text = text;
+            textLabel->AutoSize = true;
+
+            TextBox^ inputBox = gcnew TextBox();
+            inputBox->Left = 20;
+            inputBox->Top = 50;
+            inputBox->Width = 340;
+            inputBox->UseSystemPasswordChar = true;
+
+            Button^ confirmation = gcnew Button();
+            confirmation->Text = "OK";
+            confirmation->Left = 280;
+            confirmation->Width = 80;
+            confirmation->Height = 30;
+            confirmation->Top = 85;
+            confirmation->DialogResult = System::Windows::Forms::DialogResult::OK;
+
+            confirmation->BackColor = Color::FromArgb(70, 130, 180);
+            confirmation->ForeColor = Color::White;
+
+            prompt->Controls->Add(textLabel);
+            prompt->Controls->Add(inputBox);
+            prompt->Controls->Add(confirmation);
+            prompt->AcceptButton = confirmation;
+
+            return prompt->ShowDialog() == System::Windows::Forms::DialogResult::OK ? inputBox->Text : nullptr;
+        }
+
         void OnFormResize(Object^ sender, EventArgs^ e) {
             this->viewServersButton->Left = (this->ClientSize.Width - this->viewServersButton->Width) / 2;
         }
@@ -150,7 +235,7 @@ namespace ServManageSyst {
         void FindAndStorePlayer() {
             String^ name1 = _login;
             std::string login = marshal_as<std::string>(name1);
-            TVector<Player> players = Player::load_all();
+            TVector<Player> players = Player::load_all_players();
 
             for (int i = 0; i < players.size(); ++i) {
                 if (players[i].get_username() == login) {
