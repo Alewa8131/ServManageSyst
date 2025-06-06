@@ -24,6 +24,8 @@ namespace ServManageSyst {
         Panel^ buttonsPanel;
         Button^ viewServersButton;
         Button^ changePasswordButton;
+        TextBox^ passwordBox;
+        Button^ applyPasswordButton;
 
     public:
         PlayerMenu(String^ login) {
@@ -47,8 +49,7 @@ namespace ServManageSyst {
         Label^ labelInfo;
         System::ComponentModel::Container^ components;
 
-        void InitializeComponent(void)
-        {
+        void InitializeComponent(void) {
             this->SuspendLayout();
 
             // Main container panel
@@ -57,7 +58,7 @@ namespace ServManageSyst {
             this->mainPanel->Padding = System::Windows::Forms::Padding(20);
             this->mainPanel->BackColor = Color::FromArgb(240, 245, 250);
 
-            // Player info table layout (similar to serverInfoLayout)
+            // Player info table layout
             this->infoLayout = gcnew TableLayoutPanel();
             this->infoLayout->Dock = DockStyle::Top;
             this->infoLayout->AutoSize = true;
@@ -70,14 +71,14 @@ namespace ServManageSyst {
             this->infoLayout->BackColor = Color::White;
             this->infoLayout->BorderStyle = BorderStyle::FixedSingle;
 
-            // Privileges scroll panel (similar to eventPanel)
+            // Privileges scroll panel
             this->privilegePanel = gcnew Panel();
             this->privilegePanel->Dock = DockStyle::Fill;
             this->privilegePanel->AutoScroll = true;
             this->privilegePanel->BorderStyle = BorderStyle::FixedSingle;
             this->privilegePanel->BackColor = Color::FromArgb(245, 250, 255);
 
-            // Privileges list container (similar to eventList)
+            // Privileges list container
             this->privilegeList = gcnew FlowLayoutPanel();
             this->privilegeList->FlowDirection = FlowDirection::TopDown;
             this->privilegeList->WrapContents = false;
@@ -86,20 +87,25 @@ namespace ServManageSyst {
             this->privilegeList->Padding = System::Windows::Forms::Padding(15);
             this->privilegeList->BackColor = Color::FromArgb(250, 253, 255);
             this->privilegeList->Dock = DockStyle::Top;
-
             this->privilegePanel->Controls->Add(this->privilegeList);
 
-            // Buttons panel (similar to ServerMenu)
+            // Buttons panel
             this->buttonsPanel = gcnew Panel();
             this->buttonsPanel->Dock = DockStyle::Bottom;
-            this->buttonsPanel->Height = 80;
+            this->buttonsPanel->Height = 85;
             this->buttonsPanel->Padding = System::Windows::Forms::Padding(20, 10, 20, 10);
             this->buttonsPanel->BackColor = Color::Transparent;
 
-            // Button container (similar to ServerMenu structure)
-            Panel^ buttonContainer = gcnew Panel();
+            // FlowLayoutPanel for responsive layout
+            FlowLayoutPanel^ buttonContainer = gcnew FlowLayoutPanel();
             buttonContainer->Dock = DockStyle::Fill;
             buttonContainer->BackColor = Color::Transparent;
+            buttonContainer->FlowDirection = FlowDirection::LeftToRight;
+            buttonContainer->WrapContents = false;
+            buttonContainer->AutoSize = false;
+            buttonContainer->AutoScroll = true;
+            buttonContainer->Padding = System::Windows::Forms::Padding(10, 5, 10, 5);
+            buttonContainer->Margin = System::Windows::Forms::Padding(0);
 
             // View Servers Button
             this->viewServersButton = gcnew Button();
@@ -112,7 +118,6 @@ namespace ServManageSyst {
             this->viewServersButton->Size = Drawing::Size(160, 40);
             this->viewServersButton->Cursor = Cursors::Hand;
             this->viewServersButton->Click += gcnew EventHandler(this, &PlayerMenu::OnViewServersClick);
-            this->viewServersButton->Location = Point(80, 10);
             buttonContainer->Controls->Add(this->viewServersButton);
 
             // Change Password Button
@@ -126,11 +131,32 @@ namespace ServManageSyst {
             this->changePasswordButton->Size = Drawing::Size(160, 40);
             this->changePasswordButton->Cursor = Cursors::Hand;
             this->changePasswordButton->Click += gcnew EventHandler(this, &PlayerMenu::OnChangePasswordClick);
-            this->changePasswordButton->Location = Point(260, 10);
             buttonContainer->Controls->Add(this->changePasswordButton);
+
+            // Password TextBox (hidden by default)
+            this->passwordBox = gcnew TextBox();
+            this->passwordBox->Size = Drawing::Size(120, 40);
+            this->passwordBox->UseSystemPasswordChar = true;
+            this->passwordBox->Visible = false;
+            buttonContainer->Controls->Add(this->passwordBox);
+
+            // Apply Password Button (hidden by default)
+            this->applyPasswordButton = gcnew Button();
+            this->applyPasswordButton->Text = "Apply";
+            this->applyPasswordButton->Font = gcnew System::Drawing::Font("Segoe UI", 10);
+            this->applyPasswordButton->BackColor = Color::FromArgb(60, 179, 113);
+            this->applyPasswordButton->ForeColor = Color::White;
+            this->applyPasswordButton->FlatStyle = FlatStyle::Flat;
+            this->applyPasswordButton->FlatAppearance->BorderSize = 0;
+            this->applyPasswordButton->Size = Drawing::Size(100, 40);
+            this->applyPasswordButton->Cursor = Cursors::Hand;
+            this->applyPasswordButton->Visible = false;
+            this->applyPasswordButton->Click += gcnew EventHandler(this, &PlayerMenu::OnApplyPasswordClick);
+            buttonContainer->Controls->Add(this->applyPasswordButton);
 
             this->buttonsPanel->Controls->Add(buttonContainer);
 
+            // Content Panel (above buttons)
             Panel^ contentPanel = gcnew Panel();
             contentPanel->Dock = DockStyle::Fill;
             contentPanel->Controls->Add(this->privilegePanel);
@@ -150,9 +176,19 @@ namespace ServManageSyst {
             this->ResumeLayout(false);
             this->PerformLayout();
         }
+
         void OnChangePasswordClick(Object^ sender, EventArgs^ e) {
-            String^ newPassword = Prompt("Enter new password:", "Change Password");
-            if (String::IsNullOrWhiteSpace(newPassword)) return;
+            this->passwordBox->Visible = true;
+            this->applyPasswordButton->Visible = true;
+            this->passwordBox->Text = "";
+        }
+
+        void OnApplyPasswordClick(Object^ sender, EventArgs^ e) {
+            String^ newPassword = this->passwordBox->Text;
+            if (String::IsNullOrWhiteSpace(newPassword)) {
+                MessageBox::Show("Password cannot be empty.");
+                return;
+            }
 
             String^ name1 = _login;
             std::string login = marshal_as<std::string>(name1);
@@ -162,6 +198,7 @@ namespace ServManageSyst {
                 if (!User::is_valid_input(newPass)) {
                     throw std::runtime_error("Password contains forbidden characters");
                 }
+
                 TVector<Player> players = Player::load_all_players();
                 for (int i = 0; i < players.size(); ++i) {
                     if (players[i].get_username() == login) {
@@ -170,8 +207,9 @@ namespace ServManageSyst {
                     }
                 }
                 Player::save_all_objects(players, PLAYER_DB_PATH);
+
                 TVector<User> users = User::load_all_users(USER_DB_PATH);
-                for (int i = 0; i < players.size(); ++i) {
+                for (int i = 0; i < users.size(); ++i) {
                     if (users[i].get_username() == login) {
                         users[i].set_password(newPass);
                         break;
@@ -180,56 +218,13 @@ namespace ServManageSyst {
                 User::save_all_objects(users, USER_DB_PATH);
 
                 MessageBox::Show("Password successfully changed.");
+
+                this->passwordBox->Visible = false;
+                this->applyPasswordButton->Visible = false;
             }
             catch (const std::exception& ex) {
-                MessageBox::Show(gcnew String(ex.what()), "Registration Error",
-                    MessageBoxButtons::OK, MessageBoxIcon::Error);
+                MessageBox::Show(gcnew String(ex.what()), "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
             }
-        }
-        String^ Prompt(String^ text, String^ caption) {
-            Form^ prompt = gcnew Form();
-            prompt->Width = 400;
-            prompt->Height = 160;
-            prompt->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
-            prompt->Text = caption;
-            prompt->Font = gcnew System::Drawing::Font("Segoe UI", 10);
-            prompt->BackColor = Color::FromArgb(245, 250, 255);
-            prompt->ForeColor = Color::Black;
-            prompt->StartPosition = FormStartPosition::CenterScreen;
-
-            Label^ textLabel = gcnew Label();
-            textLabel->Left = 20;
-            textLabel->Top = 20;
-            textLabel->Text = text;
-            textLabel->AutoSize = true;
-
-            TextBox^ inputBox = gcnew TextBox();
-            inputBox->Left = 20;
-            inputBox->Top = 50;
-            inputBox->Width = 340;
-            inputBox->UseSystemPasswordChar = true;
-
-            Button^ confirmation = gcnew Button();
-            confirmation->Text = "OK";
-            confirmation->Left = 280;
-            confirmation->Width = 80;
-            confirmation->Height = 30;
-            confirmation->Top = 85;
-            confirmation->DialogResult = System::Windows::Forms::DialogResult::OK;
-
-            confirmation->BackColor = Color::FromArgb(70, 130, 180);
-            confirmation->ForeColor = Color::White;
-
-            prompt->Controls->Add(textLabel);
-            prompt->Controls->Add(inputBox);
-            prompt->Controls->Add(confirmation);
-            prompt->AcceptButton = confirmation;
-
-            return prompt->ShowDialog() == System::Windows::Forms::DialogResult::OK ? inputBox->Text : nullptr;
-        }
-
-        void OnFormResize(Object^ sender, EventArgs^ e) {
-            this->viewServersButton->Left = (this->ClientSize.Width - this->viewServersButton->Width) / 2;
         }
 
         void FindAndStorePlayer() {
