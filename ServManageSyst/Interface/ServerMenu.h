@@ -1,5 +1,6 @@
 // Copyright 2025 Alewa8131
 #pragma once
+#include <string>
 
 #include "../GameEntitiesLib/Server.h"
 #include "../GameEntitiesLib/Event.h"
@@ -42,22 +43,27 @@ namespace ServManageSyst {
             this->mainPanel = gcnew Panel();
             this->mainPanel->Dock = DockStyle::Fill;
             this->mainPanel->Padding = System::Windows::Forms::Padding(20);
-            this->mainPanel->BackColor = Color::FromArgb(220, 235, 250); // идентичный PlayerMenu
+            this->mainPanel->BackColor = Color::FromArgb(220, 235, 250);
 
             // Server info table layout
             this->serverInfoLayout = gcnew TableLayoutPanel();
             this->serverInfoLayout->Dock = DockStyle::Top;
             this->serverInfoLayout->AutoSize = true;
-            this->serverInfoLayout->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
+            this->serverInfoLayout->AutoSizeMode =
+                System::Windows::Forms::AutoSizeMode::GrowAndShrink;
             this->serverInfoLayout->ColumnCount = 2;
-            this->serverInfoLayout->ColumnStyles->Add(gcnew ColumnStyle(SizeType::AutoSize));
-            this->serverInfoLayout->ColumnStyles->Add(gcnew ColumnStyle(SizeType::Percent, 100));
-            this->serverInfoLayout->Margin = System::Windows::Forms::Padding(0, 0, 0, 20);
-            this->serverInfoLayout->Padding = System::Windows::Forms::Padding(15);
+            this->serverInfoLayout->ColumnStyles->Add(
+                gcnew ColumnStyle(SizeType::AutoSize));
+            this->serverInfoLayout->ColumnStyles->Add(
+                gcnew ColumnStyle(SizeType::Percent, 100));
+            this->serverInfoLayout->Margin = 
+                System::Windows::Forms::Padding(0, 0, 0, 20);
+            this->serverInfoLayout->Padding = 
+                System::Windows::Forms::Padding(15);
             this->serverInfoLayout->BackColor = Color::White;
             this->serverInfoLayout->BorderStyle = BorderStyle::FixedSingle;
 
-            // Events scroll panel (исправлено для прокрутки)
+            // Events scroll panel
             this->eventPanel = gcnew Panel();
             this->eventPanel->Dock = DockStyle::Fill;
             this->eventPanel->AutoScroll = true;
@@ -69,18 +75,20 @@ namespace ServManageSyst {
             this->eventList->FlowDirection = FlowDirection::TopDown;
             this->eventList->WrapContents = false;
             this->eventList->AutoSize = true;
-            this->eventList->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
+            this->eventList->AutoSizeMode =
+                System::Windows::Forms::AutoSizeMode::GrowAndShrink;
             this->eventList->Padding = System::Windows::Forms::Padding(15);
             this->eventList->BackColor = Color::FromArgb(250, 250, 250);
             this->eventList->Dock = DockStyle::Top;
 
             this->eventPanel->Controls->Add(this->eventList);
 
-            // Buttons panel (как в PlayerMenu)
+            // Buttons panel
             this->buttonsPanel = gcnew Panel();
             this->buttonsPanel->Dock = DockStyle::Bottom;
             this->buttonsPanel->Height = 60;
-            this->buttonsPanel->Padding = System::Windows::Forms::Padding(20, 10, 20, 10);
+            this->buttonsPanel->Padding =
+                System::Windows::Forms::Padding(20, 10, 20, 10);
             this->buttonsPanel->BackColor = Color::Transparent;
 
             // Add controls to main panel
@@ -94,12 +102,13 @@ namespace ServManageSyst {
 
             // Form settings
             this->Controls->Add(this->mainPanel);
-            this->MinimumSize = System::Drawing::Size(600, 500); // как в PlayerMenu
+            this->MinimumSize = System::Drawing::Size(600, 500);
             this->Text = L"Server Menu - " + _serverName;
-            this->Font = gcnew System::Drawing::Font("Segoe UI", 10); // как в PlayerMenu
+            this->Font = gcnew System::Drawing::Font("Segoe UI", 10);
             this->StartPosition = FormStartPosition::CenterScreen;
-            this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::Sizable;
-            this->BackColor = Color::FromArgb(220, 235, 250); // как в PlayerMenu
+            this->FormBorderStyle =
+                System::Windows::Forms::FormBorderStyle::Sizable;
+            this->BackColor = Color::FromArgb(220, 235, 250);
 
             this->ResumeLayout(false);
             this->PerformLayout();
@@ -109,28 +118,30 @@ namespace ServManageSyst {
             Label^ label = gcnew Label();
             label->Text = labelText;
             label->AutoSize = true;
-            label->Font = gcnew System::Drawing::Font("Segoe UI Semibold", 10, FontStyle::Bold);
-            label->ForeColor = Color::FromArgb(30, 60, 120); // как в PlayerMenu
+            label->Font = gcnew System::Drawing::Font(
+                "Segoe UI Semibold", 10, FontStyle::Bold);
+            label->ForeColor = Color::FromArgb(30, 60, 120);
             label->Margin = System::Windows::Forms::Padding(0, 5, 10, 5);
 
             Label^ value = gcnew Label();
             value->Text = valueText;
             value->AutoSize = true;
             value->Font = gcnew System::Drawing::Font("Segoe UI", 10);
-            value->ForeColor = Color::FromArgb(50, 50, 50); // как в PlayerMenu
+            value->ForeColor = Color::FromArgb(50, 50, 50);
             value->Margin = System::Windows::Forms::Padding(0, 5, 0, 5);
 
             this->serverInfoLayout->Controls->Add(label);
             this->serverInfoLayout->Controls->Add(value);
             this->serverInfoLayout->RowCount += 1;
-            this->serverInfoLayout->RowStyles->Add(gcnew RowStyle(SizeType::AutoSize));
+            this->serverInfoLayout->RowStyles->Add(
+                gcnew RowStyle(SizeType::AutoSize));
         }
 
         void AddEventRow(int id, String^ name, const Core::DateTime& startDate) {
             Panel^ eventItem = gcnew Panel();
-            eventItem->Width = this->eventPanel->ClientSize.Width - 40; // учитываем padding
+            eventItem->Width = this->eventPanel->ClientSize.Width - 40;
             eventItem->Height = 40;
-            eventItem->BackColor = Color::FromArgb(230, 240, 255); // как в PlayerMenu
+            eventItem->BackColor = Color::FromArgb(230, 240, 255);
             eventItem->Padding = System::Windows::Forms::Padding(10);
             eventItem->Margin = System::Windows::Forms::Padding(0, 0, 0, 5);
             eventItem->BorderStyle = BorderStyle::FixedSingle;
@@ -139,7 +150,7 @@ namespace ServManageSyst {
             eventLabel->Text = String::Format("ID: {0} - {1} - Start: {2}",
                 id, name, gcnew String(startDate.to_string().c_str()));
             eventLabel->Font = gcnew System::Drawing::Font("Segoe UI", 9);
-            eventLabel->ForeColor = Color::FromArgb(30, 30, 30); // как в PlayerMenu
+            eventLabel->ForeColor = Color::FromArgb(30, 30, 30);
             eventLabel->Location = Point(10, 10);
             eventLabel->AutoSize = true;
 
@@ -155,16 +166,20 @@ namespace ServManageSyst {
             for (int i = 0; i < servers.size(); ++i) {
                 Server s = servers[i];
                 if (s.get_name() == serverName) {
-                    AddInfoRow("Server Name:", gcnew String(s.get_name().c_str()));
-                    AddInfoRow("IP Address:", gcnew String(s.get_ip().c_str()));
-                    AddInfoRow("Uptime:", String::Format("{0} hours", s.get_uptime()));
+                    AddInfoRow("Server Name:", gcnew String(
+                        s.get_name().c_str()));
+                    AddInfoRow("IP Address:", gcnew String(
+                        s.get_ip().c_str()));
+                    AddInfoRow("Uptime:", String::Format(
+                        "{0} hours", s.get_uptime()));
 
                     // Events title
                     Label^ eventsTitle = gcnew Label();
                     eventsTitle->Text = "SCHEDULED EVENTS:";
-                    eventsTitle->Font = gcnew System::Drawing::Font("Segoe UI", 10, FontStyle::Bold);
+                    eventsTitle->Font = gcnew System::Drawing::Font(
+                        "Segoe UI", 10, FontStyle::Bold);
                     eventsTitle->AutoSize = true;
-                    eventsTitle->ForeColor = Color::FromArgb(70, 130, 180); // как в PlayerMenu
+                    eventsTitle->ForeColor = Color::FromArgb(70, 130, 180);
                     eventsTitle->Margin = System::Windows::Forms::Padding(0, 10, 0, 10);
                     this->eventList->Controls->Add(eventsTitle);
 
@@ -172,7 +187,8 @@ namespace ServManageSyst {
                     if (events.is_empty()) {
                         Label^ noEvents = gcnew Label();
                         noEvents->Text = "No scheduled events";
-                        noEvents->Font = gcnew System::Drawing::Font("Segoe UI", 9, FontStyle::Italic);
+                        noEvents->Font = gcnew System::Drawing::Font(
+                            "Segoe UI", 9, FontStyle::Italic);
                         noEvents->ForeColor = Color::FromArgb(100, 100, 100);
                         noEvents->AutoSize = true;
                         this->eventList->Controls->Add(noEvents);
@@ -180,7 +196,8 @@ namespace ServManageSyst {
                     else {
                         for (int i = 0; i < events.size(); ++i) {
                             Event* e = events[i];
-                            AddEventRow(e->get_id(), gcnew String(e->get_name().c_str()), e->get_start_date());
+                            AddEventRow(e->get_id(), gcnew String(
+                                e->get_name().c_str()), e->get_start_date());
                         }
                     }
                     break;

@@ -1,6 +1,7 @@
 // Copyright 2025 Alewa8131
 // Player can buy privilege, find other players, change password
 #pragma once
+#include <string>
 
 #include "ServerMenu.h"
 
@@ -62,11 +63,15 @@ namespace ServManageSyst {
             this->infoLayout = gcnew TableLayoutPanel();
             this->infoLayout->Dock = DockStyle::Top;
             this->infoLayout->AutoSize = true;
-            this->infoLayout->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
+            this->infoLayout->AutoSizeMode =
+                System::Windows::Forms::AutoSizeMode::GrowAndShrink;
             this->infoLayout->ColumnCount = 2;
-            this->infoLayout->ColumnStyles->Add(gcnew ColumnStyle(SizeType::AutoSize));
-            this->infoLayout->ColumnStyles->Add(gcnew ColumnStyle(SizeType::Percent, 100));
-            this->infoLayout->Margin = System::Windows::Forms::Padding(0, 0, 0, 20);
+            this->infoLayout->ColumnStyles->Add(
+                gcnew ColumnStyle(SizeType::AutoSize));
+            this->infoLayout->ColumnStyles->Add(
+                gcnew ColumnStyle(SizeType::Percent, 100));
+            this->infoLayout->Margin =
+                System::Windows::Forms::Padding(0, 0, 0, 20);
             this->infoLayout->Padding = System::Windows::Forms::Padding(15);
             this->infoLayout->BackColor = Color::White;
             this->infoLayout->BorderStyle = BorderStyle::FixedSingle;
@@ -83,7 +88,8 @@ namespace ServManageSyst {
             this->privilegeList->FlowDirection = FlowDirection::TopDown;
             this->privilegeList->WrapContents = false;
             this->privilegeList->AutoSize = true;
-            this->privilegeList->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
+            this->privilegeList->AutoSizeMode =
+                System::Windows::Forms::AutoSizeMode::GrowAndShrink;
             this->privilegeList->Padding = System::Windows::Forms::Padding(15);
             this->privilegeList->BackColor = Color::FromArgb(250, 253, 255);
             this->privilegeList->Dock = DockStyle::Top;
@@ -93,7 +99,8 @@ namespace ServManageSyst {
             this->buttonsPanel = gcnew Panel();
             this->buttonsPanel->Dock = DockStyle::Bottom;
             this->buttonsPanel->Height = 85;
-            this->buttonsPanel->Padding = System::Windows::Forms::Padding(20, 10, 20, 10);
+            this->buttonsPanel->Padding =
+                System::Windows::Forms::Padding(20, 10, 20, 10);
             this->buttonsPanel->BackColor = Color::Transparent;
 
             // FlowLayoutPanel for responsive layout
@@ -104,33 +111,39 @@ namespace ServManageSyst {
             buttonContainer->WrapContents = false;
             buttonContainer->AutoSize = false;
             buttonContainer->AutoScroll = true;
-            buttonContainer->Padding = System::Windows::Forms::Padding(10, 5, 10, 5);
+            buttonContainer->Padding =
+                System::Windows::Forms::Padding(10, 5, 10, 5);
             buttonContainer->Margin = System::Windows::Forms::Padding(0);
 
             // View Servers Button
             this->viewServersButton = gcnew Button();
             this->viewServersButton->Text = "View Servers";
-            this->viewServersButton->Font = gcnew System::Drawing::Font("Segoe UI", 10);
+            this->viewServersButton->Font =
+                gcnew System::Drawing::Font("Segoe UI", 10);
             this->viewServersButton->BackColor = Color::FromArgb(70, 130, 180);
             this->viewServersButton->ForeColor = Color::White;
             this->viewServersButton->FlatStyle = FlatStyle::Flat;
             this->viewServersButton->FlatAppearance->BorderSize = 0;
             this->viewServersButton->Size = Drawing::Size(160, 40);
             this->viewServersButton->Cursor = Cursors::Hand;
-            this->viewServersButton->Click += gcnew EventHandler(this, &PlayerMenu::OnViewServersClick);
+            this->viewServersButton->Click +=
+                gcnew EventHandler(this, &PlayerMenu::OnViewServersClick);
             buttonContainer->Controls->Add(this->viewServersButton);
 
             // Change Password Button
             this->changePasswordButton = gcnew Button();
             this->changePasswordButton->Text = "Change Password";
-            this->changePasswordButton->Font = gcnew System::Drawing::Font("Segoe UI", 10);
-            this->changePasswordButton->BackColor = Color::FromArgb(100, 149, 237);
+            this->changePasswordButton->Font =
+                gcnew System::Drawing::Font("Segoe UI", 10);
+            this->changePasswordButton->BackColor =
+                Color::FromArgb(100, 149, 237);
             this->changePasswordButton->ForeColor = Color::White;
             this->changePasswordButton->FlatStyle = FlatStyle::Flat;
             this->changePasswordButton->FlatAppearance->BorderSize = 0;
             this->changePasswordButton->Size = Drawing::Size(160, 40);
             this->changePasswordButton->Cursor = Cursors::Hand;
-            this->changePasswordButton->Click += gcnew EventHandler(this, &PlayerMenu::OnChangePasswordClick);
+            this->changePasswordButton->Click +=
+                gcnew EventHandler(this, &PlayerMenu::OnChangePasswordClick);
             buttonContainer->Controls->Add(this->changePasswordButton);
 
             // Password TextBox (hidden by default)
@@ -143,7 +156,8 @@ namespace ServManageSyst {
             // Apply Password Button (hidden by default)
             this->applyPasswordButton = gcnew Button();
             this->applyPasswordButton->Text = "Apply";
-            this->applyPasswordButton->Font = gcnew System::Drawing::Font("Segoe UI", 10);
+            this->applyPasswordButton->Font =
+                gcnew System::Drawing::Font("Segoe UI", 10);
             this->applyPasswordButton->BackColor = Color::FromArgb(60, 179, 113);
             this->applyPasswordButton->ForeColor = Color::White;
             this->applyPasswordButton->FlatStyle = FlatStyle::Flat;
@@ -151,7 +165,8 @@ namespace ServManageSyst {
             this->applyPasswordButton->Size = Drawing::Size(100, 40);
             this->applyPasswordButton->Cursor = Cursors::Hand;
             this->applyPasswordButton->Visible = false;
-            this->applyPasswordButton->Click += gcnew EventHandler(this, &PlayerMenu::OnApplyPasswordClick);
+            this->applyPasswordButton->Click +=
+                gcnew EventHandler(this, &PlayerMenu::OnApplyPasswordClick);
             buttonContainer->Controls->Add(this->applyPasswordButton);
 
             this->buttonsPanel->Controls->Add(buttonContainer);
@@ -170,7 +185,8 @@ namespace ServManageSyst {
             this->Text = L"Player Menu";
             this->Font = gcnew System::Drawing::Font("Segoe UI", 9);
             this->StartPosition = FormStartPosition::CenterScreen;
-            this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::Sizable;
+            this->FormBorderStyle =
+                System::Windows::Forms::FormBorderStyle::Sizable;
             this->BackColor = Color::FromArgb(240, 245, 250);
 
             this->ResumeLayout(false);
@@ -196,7 +212,8 @@ namespace ServManageSyst {
 
             try {
                 if (!User::is_valid_input(newPass)) {
-                    throw std::runtime_error("Password contains forbidden characters");
+                    throw std::runtime_error(
+                        "Password contains forbidden characters");
                 }
 
                 TVector<Player> players = Player::load_all_players();
@@ -223,7 +240,8 @@ namespace ServManageSyst {
                 this->applyPasswordButton->Visible = false;
             }
             catch (const std::exception& ex) {
-                MessageBox::Show(gcnew String(ex.what()), "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+                MessageBox::Show(gcnew String(ex.what()), "Error",
+                    MessageBoxButtons::OK, MessageBoxIcon::Error);
             }
         }
 
@@ -239,7 +257,8 @@ namespace ServManageSyst {
                 }
             }
 
-            MessageBox::Show("Player not found.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+            MessageBox::Show("Player not found.", "Error",
+                MessageBoxButtons::OK, MessageBoxIcon::Error);
         }
 
         void OnViewServersClick(Object^ sender, EventArgs^ e) {
@@ -250,7 +269,8 @@ namespace ServManageSyst {
             }
 
             std::string serverName = server->get_name();
-            System::String^ managedServerName = gcnew System::String(serverName.c_str());
+            System::String^ managedServerName = gcnew System::String(
+                serverName.c_str());
 
             ServerMenu^ serverMenu = gcnew ServerMenu(managedServerName);
             serverMenu->ShowDialog();
@@ -260,14 +280,15 @@ namespace ServManageSyst {
             Label^ label = gcnew Label();
             label->Text = labelText;
             label->AutoSize = true;
-            label->Font = gcnew System::Drawing::Font("Segoe UI Semibold", 10, FontStyle::Bold);
-            label->ForeColor = Color::FromArgb(30, 60, 120); // dark blue
+            label->Font = gcnew System::Drawing::Font(
+                "Segoe UI Semibold", 10, FontStyle::Bold);
+            label->ForeColor = Color::FromArgb(30, 60, 120);
 
             Label^ value = gcnew Label();
             value->Text = valueText;
             value->AutoSize = true;
             value->Font = gcnew System::Drawing::Font("Segoe UI", 10);
-            value->ForeColor = Color::FromArgb(50, 50, 50); // dark gray
+            value->ForeColor = Color::FromArgb(50, 50, 50);
 
             this->infoLayout->Controls->Add(label);
             this->infoLayout->Controls->Add(value);
@@ -275,16 +296,17 @@ namespace ServManageSyst {
         }
 
         void AddPrivilegeHistoryRow(std::string name, double price, Core::DateTime date) {
-            String^ label = gcnew String((name + " — " + std::to_string(price) + "$ — " + date.to_string()).c_str());
+            String^ label = gcnew String((name + " — " + std::to_string(price)
+                + "$ — " + date.to_string()).c_str());
 
             Label^ lbl = gcnew Label();
             lbl->Text = label;
             lbl->AutoSize = true;
             lbl->Font = gcnew System::Drawing::Font("Segoe UI", 10);
-            lbl->BackColor = Color::FromArgb(230, 240, 255); // light blue block
+            lbl->BackColor = Color::FromArgb(230, 240, 255);
             lbl->Padding = System::Windows::Forms::Padding(5);
             lbl->Margin = Windows::Forms::Padding(5);
-            lbl->ForeColor = Color::FromArgb(30, 30, 30); // dark text
+            lbl->ForeColor = Color::FromArgb(30, 30, 30);
 
             this->privilegeList->Controls->Add(lbl);
         }
@@ -294,7 +316,8 @@ namespace ServManageSyst {
             Player& p = *_player;
             AddInfoRow("Login:", gcnew String(p.get_username().c_str()));
             AddInfoRow("Status:", gcnew String(p.get_status().c_str()));
-            AddInfoRow("Join Date:", gcnew String(p.get_join_date().to_string().c_str()));
+            AddInfoRow("Join Date:", gcnew String(
+                p.get_join_date().to_string().c_str()));
             AddInfoRow("Minutes Played:", p.get_minutes_played().ToString());
 
             std::string moneyStr = std::to_string(p.get_money_spent());
@@ -304,18 +327,21 @@ namespace ServManageSyst {
             AddInfoRow("Money Spent:", gcnew String(moneyStr.c_str()));
 
             if (p.get_privilege())
-                AddInfoRow("Privilege:", gcnew String(p.get_privilege()->get_name().c_str()));
+                AddInfoRow("Privilege:", gcnew String(
+                    p.get_privilege()->get_name().c_str()));
             else
                 AddInfoRow("Privilege:", "None");
 
             if (p.get_server())
-                AddInfoRow("Server:", gcnew String(p.get_server()->get_name().c_str()));
+                AddInfoRow("Server:", gcnew String(
+                    p.get_server()->get_name().c_str()));
             else
                 AddInfoRow("Server:", "None");
 
             Label^ historyTitle = gcnew Label();
             historyTitle->Text = "Privilege History:";
-            historyTitle->Font = gcnew System::Drawing::Font("Segoe UI Semibold", 10, FontStyle::Bold);
+            historyTitle->Font = gcnew System::Drawing::Font(
+                "Segoe UI Semibold", 10, FontStyle::Bold);
             historyTitle->AutoSize = true;
             this->privilegeList->Controls->Add(historyTitle);
 
@@ -329,9 +355,10 @@ namespace ServManageSyst {
             } else {
                 for (int i = 0; i < history.size(); ++i) {
                     Privilege* pr = history[i];
-                    AddPrivilegeHistoryRow(pr->get_name(), pr->get_price(), pr->get_purchase_date());
+                    AddPrivilegeHistoryRow(pr->get_name(),
+                        pr->get_price(), pr->get_purchase_date());
                 }
             }
         }
   };
-}
+}  // namespace ServManageSyst

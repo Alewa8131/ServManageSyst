@@ -1,6 +1,7 @@
+// Copyright 2025 Alewa8131
 #pragma once
-
 #include <string>
+
 #include "../GameEntitiesLib/Player.h"
 
 namespace ServManageSyst {
@@ -28,7 +29,8 @@ namespace ServManageSyst {
         void InitializeComponent() {
             this->Text = "Register";
             this->ClientSize = System::Drawing::Size(400, 220);
-            this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+            this->FormBorderStyle =
+                System::Windows::Forms::FormBorderStyle::FixedSingle;
             this->StartPosition = FormStartPosition::Manual;
             this->Location = Drawing::Point(550, 300);
 
@@ -55,7 +57,8 @@ namespace ServManageSyst {
             buttonSubmit->Location = Drawing::Point(150, 150);
             buttonSubmit->Size = Drawing::Size(100, 30);
             buttonSubmit->Text = "Register";
-            buttonSubmit->Click += gcnew EventHandler(this, &RegistrationForm::buttonSubmit_Click);
+            buttonSubmit->Click += gcnew EventHandler(this,
+                &RegistrationForm::buttonSubmit_Click);
 
             Controls->Add(labelLogin);
             Controls->Add(labelPassword);
@@ -70,7 +73,8 @@ namespace ServManageSyst {
             String^ password = textBoxPassword->Text->Trim();
 
             if (login->Length == 0 || password->Length == 0) {
-                MessageBox::Show("Please enter both login and password.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+                MessageBox::Show("Please enter both login and password.", "Error",
+                    MessageBoxButtons::OK, MessageBoxIcon::Error);
                 return;
             }
 
@@ -93,7 +97,8 @@ namespace ServManageSyst {
                     playerfile << new_player.to_csv_line() << "\n";
                     playerfile.close();
                 }
-                MessageBox::Show("Account successfully created!", "Success", MessageBoxButtons::OK, MessageBoxIcon::Information);
+                MessageBox::Show("Account successfully created!", "Success",
+                    MessageBoxButtons::OK, MessageBoxIcon::Information);
                 this->Close();
             }
             catch (const std::exception& ex) {
@@ -102,4 +107,4 @@ namespace ServManageSyst {
             }
         }
     };
-}
+}  // namespace ServManageSyst
